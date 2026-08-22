@@ -15,7 +15,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.radmir.storyteller.models.JournalEntry
 
 @Composable
-fun JournalDialog(entries: List<JournalEntry>, onClose: () -> Unit) {
+fun JournalDialog(entries: List<JournalEntry>, onClose: () -> Unit, textScale: Float = 1f) {
     // The journal is a read-only snapshot; opening it never advances or rewinds the story.
     val pages = remember { entries.toList() }
     val scroll = rememberLazyListState(initialFirstVisibleItemIndex = (pages.size - 1).coerceAtLeast(0))
@@ -37,7 +37,9 @@ fun JournalDialog(entries: List<JournalEntry>, onClose: () -> Unit) {
                             Text(entry.speaker, color = MaterialTheme.colorScheme.primary,
                                 style = MaterialTheme.typography.labelLarge)
                             Text(if (entry.isChoice) "→ ${entry.text}" else entry.text,
-                                style = MaterialTheme.typography.bodyLarge)
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    fontSize = MaterialTheme.typography.bodyLarge.fontSize * textScale,
+                                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * textScale))
                         }
                     }
                 }

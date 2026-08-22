@@ -4,6 +4,8 @@ import com.radmir.storyteller.models.DialogueNode
 import com.radmir.storyteller.models.GameState
 import com.radmir.storyteller.models.Scene
 import com.radmir.storyteller.models.StoryScript
+import com.radmir.storyteller.models.availability
+import com.radmir.storyteller.models.applyEffects
 import com.radmir.storyteller.repository.StoryRepository
 
 class StoryEngine(private val repository: StoryRepository) {
@@ -13,7 +15,8 @@ class StoryEngine(private val repository: StoryRepository) {
         val script = repository.loadScript(json)
         gameState = GameState(
             currentSceneId = script.startSceneId,
-            currentNodeId = script.startNodeId
+            currentNodeId = script.startNodeId,
+            variables = script.initialVariables.toMap()
         )
         return gameState
     }
@@ -32,18 +35,13 @@ class StoryEngine(private val repository: StoryRepository) {
     fun getGameState(): GameState? = gameState
 
     fun selectChoice(choiceId: String): GameState? {
-        val script = repository.getScript() ?: return null
         val currentGameState = gameState ?: return null
         val currentNode = nodeIn(currentGameState.currentSceneId, currentGameState.currentNodeId) ?: return null
 
         val choice = currentNode.choices?.find { it.id == choiceId } ?: return null
 
         val currentVariables = currentGameState.variables
-        val metConditions = choice.conditions?.all { (key, value) ->
-            (currentVariables[key] ?: 0) >= value
-        } ?: true
-
-        if (metConditions) {
+        if (choice.availability(currentVariables).available) {
             val targetSceneId = choice.targetSceneId ?: currentGameState.currentSceneId
             val targetNode = nodeIn(targetSceneId, choice.targetNodeId)
                 ?: return currentGameState
@@ -53,7 +51,7 @@ class StoryEngine(private val repository: StoryRepository) {
             gameState = GameState(
                 currentSceneId = targetSceneId,
                 currentNodeId = targetNode.id,
-                variables = currentVariables,
+                variables = choice.applyEffects(currentVariables),
                 visitedNodes = newVisitedNodes
             )
         }

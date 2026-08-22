@@ -1,7 +1,9 @@
 package com.radmir.storyteller.repository
 
 import com.radmir.storyteller.models.StoryScript
+import com.radmir.storyteller.models.PlayerOptions
 import kotlinx.coroutines.CancellationException
+import com.radmir.storyteller.audio.validationErrors
 
 class StoryValidationException(val problems: List<String>) :
     IllegalArgumentException(problems.joinToString("\n"))
@@ -9,11 +11,19 @@ class StoryValidationException(val problems: List<String>) :
 fun validateStory(script: StoryScript) {
     val errors = mutableListOf<String>()
     fun check(valid: Boolean, message: String) { if (!valid) errors.add(message) }
-    check(script.schemaVersion in 1..2, "Поддерживаются schemaVersion 1 и 2.")
+    check(script.schemaVersion in 1..3, "Поддерживаются schemaVersion 1, 2 и 3.")
+    check(script.schemaVersion >= 3 || script.initialVariables.isEmpty(), "initialVariables требует schemaVersion 3.")
+    check(script.initialVariables.keys.none { it.isBlank() }, "Имена переменных initialVariables не должны быть пустыми.")
     check(script.characterAppearance.durationMs >= 0, "characterAppearance.durationMs должен быть неотрицательным.")
     check(script.characterAppearance.slideDistance.isFinite() && script.characterAppearance.slideDistance in 0f..1f,
         "characterAppearance.slideDistance должен быть от 0 до 1.")
     check(script.id.isNotBlank() && script.title.isNotBlank(), "У истории должны быть id и title.")
+    check(script.schemaVersion >= 3 || script.playerOptions == PlayerOptions(), "playerOptions требует schemaVersion 3.")
+    check(script.playerOptions.appearances.isNotEmpty() && script.playerOptions.outfits.isNotEmpty(),
+        "playerOptions должен содержать внешности и одежду.")
+    check(script.playerOptions.appearances.distinct().size == script.playerOptions.appearances.size &&
+        script.playerOptions.outfits.distinct().size == script.playerOptions.outfits.size,
+        "В playerOptions не должно быть повторяющихся вариантов.")
     val characters = script.characters.map { it.id }
     check(characters.distinct().size == characters.size, "Идентификаторы персонажей повторяются.")
     script.characters.forEach {
@@ -25,6 +35,9 @@ fun validateStory(script: StoryScript) {
     }
     target(script.startSceneId, script.startNodeId, "Начало истории")
     script.scenes.forEach { (sceneId, scene) ->
+        errors.addAll(scene.audio.validationErrors().map { "Сцена $sceneId: $it" })
+        check(script.schemaVersion >= 3 || (scene.audio.music == null && scene.audio.ambience == null),
+            "Сцена $sceneId: audio требует schemaVersion 3.")
         check(sceneId.isNotBlank() && scene.id == sceneId, "Сцена $sceneId: id должен совпадать с ключом.")
         scene.nodes.forEach { (nodeId, node) ->
             val path = "$sceneId/$nodeId"
@@ -58,6 +71,17 @@ fun validateStory(script: StoryScript) {
             node.nextNodeId?.let { target(node.nextSceneId ?: sceneId, it, path) }
             choices.forEach {
                 check(it.id.isNotBlank() && it.text.isNotBlank(), "$path: у выбора должны быть id и text.")
+                val choicePath = "$path, выбор ${it.id}"
+                check(script.schemaVersion >= 3 || (it.effects.set.isEmpty() && it.effects.add.isEmpty() &&
+                    it.unavailableReason == null && !it.hideWhenUnavailable),
+                    "$choicePath: effects и настройки недоступности требуют schemaVersion 3.")
+                check(it.unavailableReason == null || it.unavailableReason.isNotBlank(),
+                    "$choicePath: unavailableReason не должен быть пустым.")
+                if (script.schemaVersion >= 3) {
+                    (it.conditions.orEmpty().keys + it.effects.set.keys + it.effects.add.keys).forEach { variable ->
+                        check(variable in script.initialVariables, "$choicePath: переменная $variable не объявлена в initialVariables.")
+                    }
+                }
                 target(it.targetSceneId ?: sceneId, it.targetNodeId, "$path, выбор ${it.id}")
             }
         }

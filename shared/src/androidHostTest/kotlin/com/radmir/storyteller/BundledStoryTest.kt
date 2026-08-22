@@ -5,6 +5,8 @@ import com.radmir.storyteller.repository.StoryRepository
 import com.radmir.storyteller.repository.validateStoryResources
 import com.radmir.storyteller.repository.MemoryProgressStore
 import com.radmir.storyteller.viewmodel.StoryViewModel
+import com.radmir.storyteller.models.GameState
+import com.radmir.storyteller.models.availability
 import java.io.File
 import javax.imageio.ImageIO
 import kotlinx.coroutines.runBlocking
@@ -52,13 +54,15 @@ class BundledStoryTest {
         val pending = ArrayDeque<List<String?>>()
         pending.add(emptyList())
         val visited = mutableSetOf<Pair<String, String>>()
+        val states = mutableSetOf<GameState>()
         while (pending.isNotEmpty()) {
             val route = pending.removeFirst()
             val store = MemoryProgressStore()
             val original = StoryViewModel(store).apply { loadStory(json) }
             route.forEach { if (it == null) original.advance() else original.selectChoice(it) }
             val state = original.gameState.value!!
-            if (!visited.add(state.currentSceneId to state.currentNodeId)) continue
+            visited.add(state.currentSceneId to state.currentNodeId)
+            if (!states.add(state)) continue
             val restored = StoryViewModel(store).apply { continueStory(json) }
             assertEquals(state, restored.gameState.value)
             assertEquals(original.sceneUiState.value!!.stage, restored.sceneUiState.value!!.stage)
@@ -66,7 +70,8 @@ class BundledStoryTest {
             assertEquals(original.journal.value, restored.journal.value)
             val node = original.currentNode.value!!
             if (node.nextNodeId != null) pending.add(route + listOf(null))
-            node.choices.orEmpty().forEach { pending.add(route + it.id) }
+            node.choices.orEmpty().filter { it.availability(state.variables).available }
+                .forEach { pending.add(route + it.id) }
         }
         val script = StoryRepository().parseScript(json)
         assertEquals(script.scenes.values.sumOf { it.nodes.size }, visited.size)
@@ -121,13 +126,15 @@ class BundledStoryTest {
         val pending = ArrayDeque<List<String?>>()
         pending.add(emptyList())
         val visited = mutableSetOf<Pair<String, String>>()
+        val states = mutableSetOf<GameState>()
         var endings = 0
         while (pending.isNotEmpty()) {
             val route = pending.removeFirst()
             val engine = StoryEngine(StoryRepository()).apply { initialize(json) }
             route.forEach { if (it == null) engine.advance() else engine.selectChoice(it) }
             val state = engine.getGameState()!!
-            if (!visited.add(state.currentSceneId to state.currentNodeId)) continue
+            visited.add(state.currentSceneId to state.currentNodeId)
+            if (!states.add(state)) continue
             val node = engine.getCurrentNode()!!
             if (node.nextNodeId != null) {
                 val next = engine.advance()!!
@@ -139,13 +146,46 @@ class BundledStoryTest {
                 val branch = StoryEngine(StoryRepository()).apply { initialize(json) }
                 route.forEach { if (it == null) branch.advance() else branch.selectChoice(it) }
                 val next = branch.selectChoice(choice.id)!!
+                if (!choice.availability(state.variables).available) {
+                    assertEquals(state, next, "Недоступный выбор не должен менять прохождение")
+                    return@forEach
+                }
                 assertEquals(choice.targetSceneId ?: state.currentSceneId, next.currentSceneId)
                 assertEquals(choice.targetNodeId, next.currentNodeId)
                 pending.add(route + choice.id)
             }
             if (node.nextNodeId == null && node.choices.isNullOrEmpty()) endings++
+            else if (!node.choices.isNullOrEmpty()) {
+                assertTrue(node.choices.any { it.availability(state.variables).available },
+                    "${state.currentSceneId}/${state.currentNodeId}: нет доступного продолжения")
+            }
         }
         assertEquals(script.scenes.values.sumOf { it.nodes.size }, visited.size)
         assertTrue(endings > 0)
+    }
+
+    @Test fun restorationConversationDependsOnTheArrivalChoiceAndSurvivesResume() {
+        val json = File(resources, "files/story.json").readText()
+        listOf("ask_restoration" to true, "enjoy_weekend" to false).forEach { (earlyChoice, unlocked) ->
+            val store = MemoryProgressStore()
+            val vm = StoryViewModel(store).apply {
+                loadStory(json)
+                repeat(4) { advance() }
+                assertEquals("smile", currentNode.value!!.id)
+                selectChoice(earlyChoice)
+                advance(); advance()
+            }
+            val restored = StoryViewModel(store).apply { continueStory(json) }
+            assertEquals("choose", restored.currentNode.value!!.id)
+            assertEquals(vm.gameState.value, restored.gameState.value)
+            val choice = restored.currentNode.value!!.choices!!.first { it.id == "see_restoration" }
+            assertEquals(unlocked, choice.availability(restored.gameState.value!!.variables).available)
+            restored.selectChoice(choice.id)
+            assertEquals(if (unlocked) "restoration" else "choose", restored.currentNode.value!!.id)
+            if (!unlocked) {
+                restored.selectChoice("with_mira")
+                assertEquals("tea", restored.currentNode.value!!.id)
+            }
+        }
     }
 }

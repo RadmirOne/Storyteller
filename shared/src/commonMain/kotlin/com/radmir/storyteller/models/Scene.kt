@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class Scene(
     val id: String,
     val backgroundResource: String,
-    val nodes: Map<String, DialogueNode> = emptyMap()
+    val nodes: Map<String, DialogueNode> = emptyMap(),
+    val audio: com.radmir.storyteller.audio.SceneAudio = com.radmir.storyteller.audio.SceneAudio()
 )

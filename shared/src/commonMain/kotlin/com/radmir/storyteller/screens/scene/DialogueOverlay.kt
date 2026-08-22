@@ -21,16 +21,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.radmir.storyteller.models.Choice
+import com.radmir.storyteller.models.availability
 
 @Composable
 fun BoxScope.DialogueOverlay(
     speakerName: String,
     text: String,
     choices: List<Choice>?,
+    variables: Map<String, Int>,
     hasNext: Boolean,
     onSelectChoice: (String) -> Unit,
     onAdvance: () -> Unit,
-    onReturnToMenu: () -> Unit
+    onReturnToMenu: () -> Unit,
+    textScale: Float = 1f
 ) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
@@ -50,22 +53,40 @@ fun BoxScope.DialogueOverlay(
                 )
                 Text(
                     text = text,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize * textScale,
+                        lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * textScale),
                     color = Color(0xFFF0EDE7)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 if (!choices.isNullOrEmpty()) {
                     choices.forEach { choice ->
+                        val availability = choice.availability(variables)
+                        if (!availability.visible) return@forEach
                         Button(
                             onClick = { onSelectChoice(choice.id) },
+                            enabled = availability.available,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(choice.text)
+                            Text(choice.text, style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = MaterialTheme.typography.bodyLarge.fontSize * textScale,
+                                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * textScale))
+                        }
+                        availability.reason?.let { reason ->
+                            Text(reason, style = MaterialTheme.typography.bodySmall.copy(
+                                fontSize = MaterialTheme.typography.bodySmall.fontSize * textScale,
+                                lineHeight = MaterialTheme.typography.bodySmall.lineHeight * textScale),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
             }
-            if (choices.isNullOrEmpty() && hasNext) {
+            if (!choices.isNullOrEmpty() && choices.none { it.availability(variables).available }) {
+                Text("Нет доступных вариантов продолжения.", style = MaterialTheme.typography.bodyMedium)
+                Button(onClick = onReturnToMenu, modifier = Modifier.fillMaxWidth()) {
+                    Text("Вернуться в меню")
+                }
+            } else if (choices.isNullOrEmpty() && hasNext) {
                 Button(
                     onClick = onAdvance,
                     modifier = Modifier.fillMaxWidth()

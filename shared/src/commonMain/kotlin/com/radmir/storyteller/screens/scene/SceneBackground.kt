@@ -35,22 +35,30 @@ private val CameraViewConverter = TwoWayConverter<CameraView, AnimationVector4D>
 
 
 @Composable
-fun SceneBackground(state: SceneUiState, characters: List<Character> = emptyList()) {
+fun SceneBackground(
+    state: SceneUiState,
+    characters: List<Character> = emptyList(),
+    reduceMotion: Boolean = false,
+) {
     val bitmap = rememberResourceImageBitmap(state.scene.backgroundResource)
     val sprites = state.stage.filter { it.worldX != null }.mapNotNull { actor ->
         key(state.scene.id, actor.characterId) {
             val resource = characters.find { it.id == actor.characterId }?.spriteResource
-            if (resource == null) null else rememberSpriteLayer(actor, resource)
+            if (resource == null) null else rememberSpriteLayer(actor, resource, reduceMotion)
         }
     }.sortedBy { it.stage.groundY }
 
     var containerSize by remember { mutableStateOf(IntSize.Zero) }
 
     val camera = remember(state.scene.id) {
-        Animatable(state.cameraStart ?: state.cameraTarget, CameraViewConverter)
+        Animatable(if (reduceMotion) state.cameraTarget else state.cameraStart ?: state.cameraTarget, CameraViewConverter)
     }
 
-    LaunchedEffect(state.scene.id, state.cameraCueId) {
+    LaunchedEffect(state.scene.id, state.cameraCueId, reduceMotion) {
+        if (reduceMotion) {
+            camera.snapTo(state.cameraTarget)
+            return@LaunchedEffect
+        }
         if (state.sceneChanged) {
             camera.snapTo(state.cameraStart ?: state.cameraTarget)
         } else if (state.cameraStart != null) {
@@ -60,11 +68,13 @@ fun SceneBackground(state: SceneUiState, characters: List<Character> = emptyList
     }
 
     val fade = remember(state.scene.id) {
-        Animatable(if (state.enterEffect == SceneStartEffect.FADE) 0f else 1f)
+        Animatable(if (!reduceMotion && state.enterEffect == SceneStartEffect.FADE) 0f else 1f)
     }
 
-    LaunchedEffect(state.scene.id) {
-        if (state.enterEffect == SceneStartEffect.FADE) {
+    LaunchedEffect(state.scene.id, reduceMotion) {
+        if (reduceMotion) {
+            fade.snapTo(1f)
+        } else if (state.enterEffect == SceneStartEffect.FADE) {
             fade.animateTo(1f, tween(500))
         }
     }
@@ -73,14 +83,14 @@ fun SceneBackground(state: SceneUiState, characters: List<Character> = emptyList
         modifier = Modifier
             .fillMaxSize()
             .clipToBounds()
-            .alpha(fade.value)
+            .alpha(if (reduceMotion) 1f else fade.value)
             .onSizeChanged { containerSize = it }
     ) {
         val bmp = bitmap
 
         if (bmp != null && containerSize != IntSize.Zero) {
             val transform = cameraTransform(
-                camera = camera.value,
+                camera = if (reduceMotion) state.cameraTarget else camera.value,
                 container = Size(containerSize.width.toFloat(), containerSize.height.toFloat()),
                 image = Size(bmp.width.toFloat(), bmp.height.toFloat())
             )
@@ -122,12 +132,14 @@ fun SceneBackground(state: SceneUiState, characters: List<Character> = emptyList
 private data class SpriteLayer(val stage: StageCharacter, val bitmap: ImageBitmap, val alpha: Float)
 
 @Composable
-private fun rememberSpriteLayer(stage: StageCharacter, resource: String): SpriteLayer? {
+private fun rememberSpriteLayer(stage: StageCharacter, resource: String, reduceMotion: Boolean): SpriteLayer? {
     val bitmap = rememberResourceImageBitmap(resource)
-    val opacity = remember { Animatable(0f) }
-    LaunchedEffect(stage.visible, bitmap) {
-        if (bitmap != null) opacity.animateTo(if (stage.visible) 1f else 0f, tween(400))
+    val targetOpacity = if (stage.visible) 1f else 0f
+    val opacity = remember { Animatable(if (reduceMotion) targetOpacity else 0f) }
+    LaunchedEffect(stage.visible, bitmap, reduceMotion) {
+        if (reduceMotion) opacity.snapTo(targetOpacity)
+        else if (bitmap != null) opacity.animateTo(targetOpacity, tween(400))
     }
-    return bitmap?.let { SpriteLayer(stage, it, opacity.value) }
+    return bitmap?.let { SpriteLayer(stage, it, if (reduceMotion) targetOpacity else opacity.value) }
 }
 

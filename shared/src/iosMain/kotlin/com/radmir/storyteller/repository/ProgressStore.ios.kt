@@ -6,10 +6,10 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.*
 
 @OptIn(ExperimentalForeignApi::class)
-class AppleProgressStore : ProgressStore {
+class AppleProgressStore(fileName: String = "story-progress.json") : ProgressStore {
     private val directory = (NSSearchPathForDirectoriesInDomains(
         NSApplicationSupportDirectory, NSUserDomainMask, true).first() as String) + "/Storyteller"
-    private val path = "$directory/story-progress.json"
+    private val path = "$directory/$fileName"
 
     override fun read(): String? {
         if (!NSFileManager.defaultManager.fileExistsAtPath(path)) return null
@@ -26,4 +26,7 @@ class AppleProgressStore : ProgressStore {
 }
 
 @Composable
-actual fun rememberProgressStore(): ProgressStore = remember { AppleProgressStore() }
+actual fun rememberProgressStore(storyId: String?): ProgressStore = remember(storyId) {
+    val legacy = AppleProgressStore()
+    if (storyId == null) legacy else StoryProgressStore(storyId, AppleProgressStore(progressFileName(storyId)), legacy)
+}

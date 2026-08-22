@@ -22,9 +22,10 @@ import com.radmir.storyteller.viewmodel.StoryViewModel
 import com.radmir.storyteller.models.PLAYER_CHARACTER_ID
 import com.radmir.storyteller.models.StagePosition
 import com.radmir.storyteller.models.speakerName
+import com.radmir.storyteller.settings.ReadingSettings
 
 @Composable
-fun StoryScreen(viewModel: StoryViewModel = viewModel(), onReturnToMenu: () -> Unit) {
+fun StoryScreen(viewModel: StoryViewModel = viewModel(), onReturnToMenu: () -> Unit, settings: ReadingSettings = ReadingSettings()) {
     val gameState by viewModel.gameState.collectAsState()
     val currentNode by viewModel.currentNode.collectAsState()
     val currentScript by viewModel.currentScript.collectAsState()
@@ -51,6 +52,7 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel(), onReturnToMenu: () -> U
     val speakerName = script.speakerName(current.characterId, playerCharacter)
     val speakingPlayer = playerCharacter.takeIf { current.characterId == PLAYER_CHARACTER_ID }
     val displayedScene = scene.copy(stage = emptyList())
+    val stageFraction = (0.62f - (settings.textScale - 1f).coerceAtLeast(0f) * 0.24f)
 
     Column(
         modifier = Modifier
@@ -58,8 +60,8 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel(), onReturnToMenu: () -> U
             .background(Color.Black)
     ) {
         // Stable viewport: dialogue length must not resize the camera and actors.
-        Box(modifier = Modifier.weight(0.62f).fillMaxWidth().clipToBounds()) {
-            SceneBackground(state = displayedScene, characters = script.characters)
+        Box(modifier = Modifier.weight(stageFraction).fillMaxWidth().clipToBounds()) {
+            SceneBackground(state = displayedScene, characters = script.characters, reduceMotion = settings.reduceMotion)
             val position = scene.stage.find { it.characterId == current.characterId && it.worldX == null }?.position
                 ?: if (speakingPlayer != null) StagePosition.RIGHT else StagePosition.LEFT
             key(script.id, scene.scene.id, current.characterId, position) {
@@ -68,17 +70,19 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel(), onReturnToMenu: () -> U
                     spriteResource = script.characters.find { it.id == current.characterId }?.spriteResource,
                     player = speakingPlayer,
                     position = position,
-                    appearance = script.characterAppearance,
+                    appearance = if (settings.reduceMotion) script.characterAppearance.copy(enabled = false) else script.characterAppearance,
                     modifier = Modifier.fillMaxSize()
                 )
             }
         }
-        Box(modifier = Modifier.weight(0.38f).fillMaxWidth()) {
+        Box(modifier = Modifier.weight(1f - stageFraction).fillMaxWidth()) {
             key(scene.scene.id, current.id) {
                 DialogueOverlay(
                     speakerName = speakerName,
                     text = current.text,
                     choices = current.choices,
+                    variables = gameState!!.variables,
+                    textScale = settings.textScale,
                     hasNext = current.nextNodeId != null,
                     onSelectChoice = { viewModel.selectChoice(it) },
                     onAdvance = { viewModel.advance() },

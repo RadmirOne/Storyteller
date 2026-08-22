@@ -15,4 +15,4 @@ class MemoryProgressStore : ProgressStore {
 }
 
 @Composable
-expect fun rememberProgressStore(): ProgressStore
+expect fun rememberProgressStore(storyId: String? = null): ProgressStore

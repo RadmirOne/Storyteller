@@ -28,8 +28,12 @@ class AndroidProgressStore(file: File) : ProgressStore {
 }
 
 @Composable
-actual fun rememberProgressStore(): ProgressStore {
-    if (LocalInspectionMode.current) return remember { MemoryProgressStore() }
+actual fun rememberProgressStore(storyId: String?): ProgressStore {
+    if (LocalInspectionMode.current) return remember(storyId) { MemoryProgressStore() }
     val context = LocalContext.current.applicationContext
-    return remember(context) { AndroidProgressStore(File(context.filesDir, "story-progress.json")) }
+    return remember(context, storyId) {
+        val legacy = AndroidProgressStore(File(context.filesDir, "story-progress.json"))
+        if (storyId == null) legacy else StoryProgressStore(storyId,
+            AndroidProgressStore(File(context.filesDir, progressFileName(storyId))), legacy)
+    }
 }

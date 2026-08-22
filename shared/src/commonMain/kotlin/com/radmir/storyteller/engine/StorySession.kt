@@ -30,7 +30,7 @@ internal class StorySession(
     init {
         engine.initialize(json)
         story = repository.getScript()!!
-        if (progress != null && (progress.version != 1 || progress.story != story)) {
+        if (progress != null && (progress.version != 1 || !progress.story.isProgressCompatibleWith(story))) {
             throw ProgressException("История обновилась. Это сохранение несовместимо; начните новую игру.")
         }
         rebuild(null, SceneStartEffect.NONE)
@@ -60,7 +60,8 @@ internal class StorySession(
         val choice = if (choiceId != null) oldNode.choices?.find { it.id == choiceId } else null
         if (choiceId == null && !oldNode.choices.isNullOrEmpty()) return false
         val next = if (choiceId == null) engine.advance() else engine.selectChoice(choiceId)
-        if (next == null || next == previous) return false
+        // A successful self-loop can produce equal values and must still enter the route/journal.
+        if (next == null || next === previous) return false
         if (choice != null) entries.add(JournalEntry(previous.currentSceneId, previous.currentNodeId,
             "Ваш выбор", choice.text, isChoice = true))
         steps.add(ProgressStep(choiceId))

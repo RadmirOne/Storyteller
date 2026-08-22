@@ -16,6 +16,13 @@ enum class PlayerOutfit {
     COAT
 }
 
+/** Available protagonist variants in author-defined display order. */
+@Serializable
+data class PlayerOptions(
+    val appearances: List<PlayerAppearance> = PlayerAppearance.entries.toList(),
+    val outfits: List<PlayerOutfit> = PlayerOutfit.entries.toList(),
+)
+
 /** Player-defined protagonist data, stored independently from story-script characters. */
 @Serializable
 data class PlayerCharacter(

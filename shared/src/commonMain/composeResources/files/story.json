@@ -1,5 +1,8 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
+  "initialVariables": {
+    "lighthouseInterest": 0
+  },
   "characterAppearance": {
     "enabled": true,
     "durationMs": 400,
@@ -116,7 +119,19 @@
             "focusX": 0.5
           },
           "cameraDurationMs": 0,
-          "nextNodeId": "invite"
+          "choices": [
+            {
+              "id": "ask_restoration",
+              "text": "Илья, мне интересно, как вы восстановили маяк",
+              "targetNodeId": "invite",
+              "effects": { "add": { "lighthouseInterest": 1 } }
+            },
+            {
+              "id": "enjoy_weekend",
+              "text": "Начну с прогулки, а дальше решу",
+              "targetNodeId": "invite"
+            }
+          ]
         },
         "invite": {
           "id": "invite",
@@ -140,6 +155,7 @@
           "nextSceneId": "tower"
         }
       },
+      "audio": { "ambience": "files/audio/sea.wav" },
       "backgroundResource": "files/scenes/island_arrival.png"
     },
     "tower": {
@@ -176,6 +192,14 @@
           "cameraDurationMs": 0,
           "choices": [
             {
+              "id": "see_restoration",
+              "targetNodeId": "restoration",
+              "targetSceneId": "ilya_evening",
+              "text": "Попросить Илью показать механизм маяка",
+              "conditions": { "lighthouseInterest": 1 },
+              "unavailableReason": "Сначала нужно проявить интерес к восстановлению маяка при знакомстве."
+            },
+            {
               "id": "with_ilya",
               "targetNodeId": "quiet",
               "targetSceneId": "ilya_evening",
@@ -201,6 +225,17 @@
     "ilya_evening": {
       "id": "ilya_evening",
       "nodes": {
+        "restoration": {
+          "id": "restoration",
+          "characterId": "ilya",
+          "text": "Ты ещё у причала спросила о реставрации. Смотри: эту линзу мы собирали по кусочкам. Приятно показать её тому, кому правда интересно.",
+          "stageCharacters": [
+            { "characterId": "ilya", "worldX": 0.5, "groundY": 0.94 }
+          ],
+          "camera": { "targetCharacterId": "ilya" },
+          "cameraDurationMs": 0,
+          "nextNodeId": "quiet"
+        },
         "quiet": {
           "id": "quiet",
           "characterId": "ilya",
@@ -434,6 +469,7 @@
           "cameraDurationMs": 0
         }
       },
+      "audio": { "ambience": "files/audio/sea.wav" },
       "backgroundResource": "files/scenes/island_arrival.png"
     },
     "friends": {

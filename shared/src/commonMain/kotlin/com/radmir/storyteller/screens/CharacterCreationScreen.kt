@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.radmir.storyteller.models.PlayerAppearance
 import com.radmir.storyteller.models.PlayerCharacter
 import com.radmir.storyteller.models.PlayerOutfit
+import com.radmir.storyteller.models.PlayerOptions
 import com.radmir.storyteller.screens.scene.rememberResourceImageBitmap
 
 private val Gold = Color(0xFFE4C58D)
@@ -53,11 +54,21 @@ private val Paper = Color(0xFFF6EEE0)
 @Composable
 fun CharacterCreationScreen(
     onCharacterCreated: (PlayerCharacter) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    options: PlayerOptions = PlayerOptions(),
+    backgroundResource: String = "files/scenes/island_arrival.png",
+    reduceMotion: Boolean = false,
 ) {
+    require(options.appearances.isNotEmpty() && options.outfits.isNotEmpty())
     var name by rememberSaveable { mutableStateOf("") }
-    var appearance by rememberSaveable { mutableStateOf(PlayerAppearance.DARK_HAIR) }
-    var outfit by rememberSaveable { mutableStateOf(PlayerOutfit.JACKET) }
+    var savedAppearance by rememberSaveable(options.appearances) {
+        mutableStateOf(PlayerAppearance.DARK_HAIR.takeIf { it in options.appearances } ?: options.appearances.first())
+    }
+    var savedOutfit by rememberSaveable(options.outfits) {
+        mutableStateOf(PlayerOutfit.JACKET.takeIf { it in options.outfits } ?: options.outfits.first())
+    }
+    val appearance = savedAppearance.takeIf { it in options.appearances } ?: options.appearances.first()
+    val outfit = savedOutfit.takeIf { it in options.outfits } ?: options.outfits.first()
     var step by rememberSaveable { mutableStateOf(0) }
     val normalizedName = name.trim()
     val scroll = rememberScrollState()
@@ -111,7 +122,10 @@ fun CharacterCreationScreen(
                 AnimatedContent(
                     targetState = step,
                     modifier = Modifier.weight(1f).fillMaxWidth(),
-                    transitionSpec = { fadeIn(tween(240, delayMillis = 90)) togetherWith fadeOut(tween(90)) },
+                    transitionSpec = {
+                        fadeIn(tween(if (reduceMotion) 0 else 240, delayMillis = if (reduceMotion) 0 else 90)) togetherWith
+                            fadeOut(tween(if (reduceMotion) 0 else 90))
+                    },
                     label = "Шаг создания героини"
                 ) { currentStep ->
                 BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -137,7 +151,7 @@ fun CharacterCreationScreen(
                         modifier = Modifier.padding(top = 8.dp, bottom = 20.dp)
                     )
                     if (currentStep == 0) {
-                        val backdrop = rememberResourceImageBitmap("files/scenes/island_arrival.png")
+                        val backdrop = rememberResourceImageBitmap(backgroundResource)
                         Box(Modifier.fillMaxWidth().height(if (compact) 100.dp else 180.dp).clip(RoundedCornerShape(20.dp))) {
                             backdrop?.let {
                                 Image(it, contentDescription = null, contentScale = ContentScale.Crop,
@@ -175,8 +189,11 @@ fun CharacterCreationScreen(
                         1 -> CharacterSelector(
                             name = normalizedName,
                             appearance = appearance,
+                            outfit = outfit,
+                            playerOptions = options,
+                            reduceMotion = reduceMotion,
                             portraitSize = portraitSize,
-                            onAppearanceSelected = { appearance = it }
+                            onAppearanceSelected = { savedAppearance = it }
                         )
                         else -> CharacterSelector(
                             name = normalizedName,
@@ -184,8 +201,10 @@ fun CharacterCreationScreen(
                             outfit = outfit,
                             portraitSize = portraitSize,
                             choosingOutfit = true,
-                            onAppearanceSelected = { appearance = it },
-                            onOutfitSelected = { outfit = it }
+                            playerOptions = options,
+                            reduceMotion = reduceMotion,
+                            onAppearanceSelected = { savedAppearance = it },
+                            onOutfitSelected = { savedOutfit = it }
                         )
                     }
                     Spacer(Modifier.height(20.dp))
@@ -223,10 +242,13 @@ private fun CharacterSelector(
     portraitSize: Dp,
     outfit: PlayerOutfit = PlayerOutfit.JACKET,
     choosingOutfit: Boolean = false,
-    onOutfitSelected: (PlayerOutfit) -> Unit = {}
+    onOutfitSelected: (PlayerOutfit) -> Unit = {},
+    playerOptions: PlayerOptions = PlayerOptions(),
+    reduceMotion: Boolean = false,
 ) {
-    val options = PlayerAppearance.entries
-    val outfits = PlayerOutfit.entries
+    val options = playerOptions.appearances
+    val outfits = playerOptions.outfits
+    val optionCount = if (choosingOutfit) outfits.size else options.size
     val selectedIndex = if (choosingOutfit) outfits.indexOf(outfit) else options.indexOf(appearance)
     val onSelected: (Int) -> Unit = { index ->
         if (choosingOutfit) onOutfitSelected(outfits[index]) else onAppearanceSelected(options[index])
@@ -238,7 +260,7 @@ private fun CharacterSelector(
         Box(
             Modifier.widthIn(max = 300.dp).fillMaxWidth().height(portraitSize)
                 .clip(RoundedCornerShape(20.dp))
-                .pointerInput(swipeThreshold) {
+                .pointerInput(swipeThreshold, optionCount) {
                     var distance = 0f
                     detectHorizontalDragGestures(
                         onDragStart = { distance = 0f },
@@ -254,26 +276,25 @@ private fun CharacterSelector(
                                 else -> 0
                             }
                             if (direction != 0) {
-                                currentOnSelected((currentIndex + direction + options.size) % options.size)
+                                currentOnSelected((currentIndex + direction + optionCount) % optionCount)
                             }
                         }
                     )
                 }
         ) {
-            Crossfade(selectedIndex, modifier = Modifier.size(portraitSize).align(Alignment.Center)
-                .clip(RoundedCornerShape(20.dp)), animationSpec = tween(240), label = "Образ героини") { index ->
-                CharacterPortrait(if (choosingOutfit) appearance else options[index],
-                    if (choosingOutfit) outfits[index] else PlayerOutfit.JACKET,
+            Crossfade(appearance to outfit, modifier = Modifier.size(portraitSize).align(Alignment.Center)
+                .clip(RoundedCornerShape(20.dp)), animationSpec = tween(if (reduceMotion) 0 else 240), label = "Образ героини") { variant ->
+                CharacterPortrait(variant.first, variant.second,
                     Modifier.fillMaxSize(), if (choosingOutfit) PortraitCrop.FULL else PortraitCrop.FACE)
             }
             IconButton(
-                onClick = { onSelected((selectedIndex + options.size - 1) % options.size) },
+                onClick = { onSelected((selectedIndex + optionCount - 1) % optionCount) },
                 modifier = Modifier.align(Alignment.CenterStart).padding(4.dp)
                     .background(Ink.copy(alpha = .75f), RoundedCornerShape(24.dp))
                     .semantics { contentDescription = if (choosingOutfit) "Предыдущий наряд" else "Предыдущая внешность" }
             ) { Text("‹", color = Gold, fontSize = 32.sp) }
             IconButton(
-                onClick = { onSelected((selectedIndex + 1) % options.size) },
+                onClick = { onSelected((selectedIndex + 1) % optionCount) },
                 modifier = Modifier.align(Alignment.CenterEnd).padding(4.dp)
                     .background(Ink.copy(alpha = .75f), RoundedCornerShape(24.dp))
                     .semantics { contentDescription = if (choosingOutfit) "Следующий наряд" else "Следующая внешность" }
@@ -285,10 +306,10 @@ private fun CharacterSelector(
             horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (choosingOutfit) outfits.forEach { option ->
                 PortraitOption(option.label(), option == outfit, { onOutfitSelected(option) },
-                    appearance, option, Modifier.weight(1f))
+                    appearance, option, Modifier.weight(1f), reduceMotion = reduceMotion)
             } else options.forEach { option ->
                 PortraitOption(option.label(), option == appearance, { onAppearanceSelected(option) },
-                    option, PlayerOutfit.JACKET, Modifier.weight(1f), portrait = true)
+                    option, outfit, Modifier.weight(1f), portrait = true, reduceMotion = reduceMotion)
             }
         }
     }
@@ -302,10 +323,11 @@ private fun PortraitOption(
     appearance: PlayerAppearance,
     outfit: PlayerOutfit,
     modifier: Modifier = Modifier,
-    portrait: Boolean = false
+    portrait: Boolean = false,
+    reduceMotion: Boolean = false,
 ) {
     val borderColor by animateColorAsState(if (selected) Gold else Color(0xFF344850),
-        animationSpec = tween(180), label = "Выбор образа")
+        animationSpec = tween(if (reduceMotion) 0 else 180), label = "Выбор образа")
     Column(modifier.clip(RoundedCornerShape(12.dp))
         .background(if (selected) Gold.copy(alpha = .12f) else Color(0xFF182F39))
         .border(if (selected) 2.dp else 1.dp,

@@ -12,7 +12,9 @@ data class StoryScript(
     val startNodeId: String,
     val scenes: Map<String, Scene> = emptyMap(),
     val schemaVersion: Int = 1,
-    val characterAppearance: CharacterAppearance = CharacterAppearance()
+    val characterAppearance: CharacterAppearance = CharacterAppearance(),
+    val initialVariables: Map<String, Int> = emptyMap(),
+    val playerOptions: PlayerOptions = PlayerOptions()
 )
 
 @Serializable

@@ -1,0 +1,6 @@
+{
+  "stories": [
+    { "id": "lighthouse_weekend", "resource": "files/story.json" },
+    { "id": "letter_at_dawn", "resource": "files/stories/letter-at-dawn.json" }
+  ]
+}

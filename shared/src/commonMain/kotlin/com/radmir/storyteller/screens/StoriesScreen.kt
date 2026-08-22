@@ -19,6 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.radmir.storyteller.models.StoryScript
 import com.radmir.storyteller.models.ProgressException
+import com.radmir.storyteller.models.isProgressCompatibleWith
+import com.radmir.storyteller.repository.StoryCatalogEntry
+import com.radmir.storyteller.repository.parseStory
+import com.radmir.storyteller.audio.validateStoryAudioResources
 import com.radmir.storyteller.repository.StoryRepository
 import com.radmir.storyteller.repository.StoryValidationException
 import com.radmir.storyteller.repository.validateStoryResources
@@ -36,7 +40,9 @@ fun StoriesScreen(
     onStoryContinued: (String) -> Unit,
     savedStory: StoryScript? = null,
     saveError: String? = null,
-    hasPlayed: Boolean = false
+    hasPlayed: Boolean = false,
+    entry: StoryCatalogEntry = StoryCatalogEntry("lighthouse_weekend", "files/story.json"),
+    onBackToCatalog: (() -> Unit)? = null
 ) {
     var isLoading by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -44,7 +50,7 @@ fun StoriesScreen(
     var cover by remember { mutableStateOf<ImageBitmap?>(null) }
     val scope = rememberCoroutineScope()
     var confirmRestart by remember { mutableStateOf(false) }
-    val canContinue = preview != null && preview == savedStory
+    val canContinue = preview?.let { savedStory?.isProgressCompatibleWith(it) } == true
 
     fun openStory(resume: Boolean) {
         isLoading = true
@@ -52,9 +58,11 @@ fun StoriesScreen(
         scope.launch {
             try {
                 val json = withContext(Dispatchers.Default) {
-                    Res.readBytes("files/story.json").decodeToString().also {
-                        val script = StoryRepository().parseScript(it)
+                    Res.readBytes(entry.resource).decodeToString().also {
+                        val script = entry.parseStory(it)
                         validateStoryResources(script) { path -> loadResourceImage(path) }
+                        val audioProblems = validateStoryAudioResources(script) { path -> Res.readBytes(path) }
+                        if (audioProblems.isNotEmpty()) throw StoryValidationException(audioProblems)
                     }
                 }
                 if (resume) onStoryContinued(json) else onStoryStarted(json)
@@ -76,10 +84,10 @@ fun StoriesScreen(
             dismissButton = { TextButton(onClick = { confirmRestart = false }) { Text("Отмена") } })
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(entry) {
         try {
             val result = withContext(Dispatchers.Default) {
-                val script = StoryRepository().parseScript(Res.readBytes("files/story.json").decodeToString())
+                val script = entry.parseStory(Res.readBytes(entry.resource).decodeToString())
                 script to loadResourceImage(script.scenes.getValue(script.startSceneId).backgroundResource)
             }
             preview = result.first
@@ -100,7 +108,11 @@ fun StoriesScreen(
             0f to Color(0x33101B26), 0.35f to Color(0x22101B26),
             0.66f to Color(0xE6101B26), 1f to Color(0xFF0C1821)
         )))
-        Text("STORYTELLER", color = Color(0xFFE3BB79), fontSize = 12.sp, letterSpacing = 4.sp,
+        if (onBackToCatalog != null) {
+            TextButton(onClick = onBackToCatalog, modifier = Modifier.align(Alignment.TopStart).padding(16.dp)) {
+                Text("← Все истории")
+            }
+        } else Text("STORYTELLER", color = Color(0xFFE3BB79), fontSize = 12.sp, letterSpacing = 4.sp,
             modifier = Modifier.align(Alignment.TopStart).padding(28.dp))
         Column(
             modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().fillMaxHeight(0.65f)
@@ -180,6 +192,6 @@ fun StoriesScreen(
 private fun storyLoadError(error: Exception): String = when (error) {
     is ProgressException -> error.message ?: "Не удалось восстановить прохождение."
     is StoryValidationException -> "Ошибка сценария:\n${error.message}"
-    is SerializationException -> "Не удалось прочитать сценарий. Проверьте JSON и поля формата версии 1 или 2."
+    is SerializationException -> "Не удалось прочитать сценарий. Проверьте JSON и поля формата версий 1–3."
     else -> "Не удалось открыть историю. Попробуйте ещё раз."
 }

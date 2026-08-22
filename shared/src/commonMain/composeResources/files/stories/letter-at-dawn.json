@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 3,
+  "id": "letter_at_dawn",
+  "playerOptions": {
+    "appearances": ["DARK_HAIR", "RED_HAIR"],
+    "outfits": ["SWEATER", "COAT"]
+  },
+  "title": "Письмо на рассвете",
+  "description": "Короткая история о письме, которое слишком долго ждало ответа. Иногда следующий шаг — просто остаться рядом.",
+  "characters": [
+    { "id": "protagonist", "name": "Вы" },
+    { "id": "mira", "name": "Мира", "spriteResource": "files/characters/mira.png" }
+  ],
+  "startSceneId": "shore",
+  "startNodeId": "letter",
+  "scenes": {
+    "shore": {
+      "id": "shore",
+      "audio": { "ambience": "files/audio/sea.wav" },
+      "backgroundResource": "files/scenes/island_arrival.png",
+      "nodes": {
+        "letter": {
+          "id": "letter", "characterId": "mira",
+          "text": "Нашла в кармане письмо. Месяц собираюсь ответить сестре. Всё кажется, что сначала нужно придумать что-нибудь важное.",
+          "nextNodeId": "reply"
+        },
+        "reply": {
+          "id": "reply", "characterId": "protagonist",
+          "text": "Можно начать с того, что ты по ней скучаешь. А остальное дописать потом.",
+          "nextNodeId": "ask"
+        },
+        "ask": {
+          "id": "ask", "characterId": "mira",
+          "text": "{{playerName}}, посидишь со мной, пока я пишу? Или пройдёмся сначала?",
+          "choices": [
+            { "id": "stay", "text": "Останусь. Начинай, я рядом", "targetNodeId": "write" },
+            { "id": "walk", "text": "Пройдёмся — слова найдутся по дороге", "targetNodeId": "walk" }
+          ]
+        },
+        "write": {
+          "id": "write", "characterId": "mira",
+          "text": "«Привет. У нас сегодня светлый рассвет. Хотела бы я, чтобы ты его увидела». Знаешь, кажется, я наконец начала.",
+          "nextNodeId": "send"
+        },
+        "send": {
+          "id": "send", "characterId": "protagonist",
+          "text": "Теперь у этого утра есть адресат. Пойдём выпьем чаю, пока письмо отправляется."
+        },
+        "walk": {
+          "id": "walk", "characterId": "mira",
+          "text": "Дойдём до причала и вернёмся. А ей я напишу про эту прогулку — будто она идёт с нами. Спасибо, {{playerName}}."
+        }
+      }
+    }
+  }
+}

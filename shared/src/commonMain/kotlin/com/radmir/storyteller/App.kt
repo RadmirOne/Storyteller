@@ -23,6 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.radmir.storyteller.screens.CharacterCreationScreen
@@ -31,6 +33,13 @@ import com.radmir.storyteller.screens.StoryScreen
 import com.radmir.storyteller.screens.JournalDialog
 import com.radmir.storyteller.repository.rememberProgressStore
 import com.radmir.storyteller.viewmodel.StoryViewModel
+import com.radmir.storyteller.repository.StoryCatalogEntry
+import com.radmir.storyteller.repository.StoryRepository
+import com.radmir.storyteller.screens.StoryCatalogScreen
+import com.radmir.storyteller.settings.rememberReadingSettingsController
+import com.radmir.storyteller.settings.SettingsDialog
+import com.radmir.storyteller.audio.StoryAudio
+import com.radmir.storyteller.audio.AudioSettings
 
 @Composable
 @Preview
@@ -42,12 +51,17 @@ fun App(debugToolsEnabled: Boolean = false) {
         surface = Color(0xFF10212C),
         primaryContainer = Color(0xFF0C1821)
     )) {
-        var showStory by remember { mutableStateOf(false) }
+        var selectedEntry by remember { mutableStateOf<StoryCatalogEntry?>(null) }
+        var showStory by remember(selectedEntry) { mutableStateOf(false) }
         var characterSetupStory by remember { mutableStateOf<String?>(null) }
         var showJournal by remember { mutableStateOf(false) }
         var showDebug by remember { mutableStateOf(false) }
+        var showSettings by remember { mutableStateOf(false) }
+        val settingsController = rememberReadingSettingsController()
+        val settings = settingsController.settings
+        var audioError by remember(selectedEntry, showStory) { mutableStateOf<String?>(null) }
 
-        val progressStore = rememberProgressStore()
+        val progressStore = rememberProgressStore(selectedEntry?.id)
         val storyViewModel = remember(progressStore, debugToolsEnabled) { StoryViewModel(progressStore, debugToolsEnabled) }
         val debugNavigation by storyViewModel.debugNavigation.collectAsState()
         val gameState by storyViewModel.gameState.collectAsState()
@@ -55,7 +69,13 @@ fun App(debugToolsEnabled: Boolean = false) {
         val savedStory by storyViewModel.savedStory.collectAsState()
         val saveError by storyViewModel.saveError.collectAsState()
         val journal by storyViewModel.journal.collectAsState()
-        if (showJournal) JournalDialog(journal, onClose = { showJournal = false })
+        val sceneUiState by storyViewModel.sceneUiState.collectAsState()
+        StoryAudio(if (showStory) sceneUiState else null,
+            AudioSettings(settings.soundEnabled, settings.volume, settings.volume),
+            onError = { audioError = it })
+        if (showSettings) SettingsDialog(settings, { settingsController.update(it) },
+            onDismiss = { showSettings = false }, error = settingsController.error)
+        if (showJournal) JournalDialog(journal, onClose = { showJournal = false }, textScale = settings.textScale)
         if (debugToolsEnabled && showDebug && showStory) {
             AlertDialog(onDismissRequest = { showDebug = false },
                 title = { Text("Отладка прохождения") },
@@ -93,6 +113,9 @@ fun App(debugToolsEnabled: Boolean = false) {
                             modifier = Modifier.weight(1f).padding(horizontal = 12.dp),
                             maxLines = 1, overflow = TextOverflow.Ellipsis)
                         TextButton(onClick = { showJournal = true }) { Text("Журнал") }
+                        TextButton(onClick = { showSettings = true }, modifier = Modifier.semantics {
+                            contentDescription = "Настройки чтения"
+                        }) { Text("⋮") }
                         if (debugToolsEnabled) TextButton(onClick = { showDebug = true }) { Text("Debug") }
                     }
                     saveError?.let {
@@ -102,12 +125,23 @@ fun App(debugToolsEnabled: Boolean = false) {
                             TextButton(onClick = { storyViewModel.saveProgress() }) { Text("Повторить") }
                         }
                     }
+                    audioError?.let {
+                        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                            Text(it, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.error)
+                            TextButton(onClick = { audioError = null }) { Text("Скрыть") }
+                        }
+                    }
                     key(playbackRevision) {
-                        StoryScreen(viewModel = storyViewModel, onReturnToMenu = { showStory = false })
+                        StoryScreen(viewModel = storyViewModel, onReturnToMenu = { showStory = false }, settings = settings)
                     }
                 }
                 characterSetupStory != null -> {
+                    val setupScript = remember(characterSetupStory) { StoryRepository().parseScript(characterSetupStory!!) }
                     CharacterCreationScreen(
+                        options = setupScript.playerOptions,
+                        backgroundResource = setupScript.scenes.getValue(setupScript.startSceneId).backgroundResource,
+                        reduceMotion = settings.reduceMotion,
                         onBack = { characterSetupStory = null },
                         onCharacterCreated = { character ->
                             val json = characterSetupStory ?: return@CharacterCreationScreen
@@ -117,15 +151,17 @@ fun App(debugToolsEnabled: Boolean = false) {
                         }
                     )
                 }
-                else -> {
+                selectedEntry != null -> key(selectedEntry!!.id) {
                     StoriesScreen(savedStory = savedStory, saveError = saveError,
+                        entry = selectedEntry!!, onBackToCatalog = { selectedEntry = null },
                         hasPlayed = storyViewModel.currentScript.value != null, onStoryContinued = { json ->
                             storyViewModel.continueStory(json)
                             showStory = true
                         }, onStoryStarted = { json ->
                             characterSetupStory = json
-                        })
+                    })
                 }
+                else -> StoryCatalogScreen(onSelect = { selectedEntry = it }, onSettings = { showSettings = true })
             }
         }
     }

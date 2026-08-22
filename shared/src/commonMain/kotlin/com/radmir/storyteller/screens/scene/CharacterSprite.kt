@@ -17,7 +17,7 @@ import com.radmir.storyteller.models.StageCharacter
 import com.radmir.storyteller.models.StagePosition
 
 @Composable
-fun BoxScope.CharacterSprite(stage: StageCharacter, spriteResource: String?) {
+fun BoxScope.CharacterSprite(stage: StageCharacter, spriteResource: String?, reduceMotion: Boolean = false) {
     if (spriteResource == null || !stage.visible) return
     val bmp = rememberResourceImageBitmap(spriteResource) ?: return
 
@@ -27,9 +27,9 @@ fun BoxScope.CharacterSprite(stage: StageCharacter, spriteResource: String?) {
         StagePosition.RIGHT -> Alignment.BottomEnd
     }
 
-    val appear = remember(stage.characterId, stage.position) { Animatable(0f) }
-    LaunchedEffect(stage.characterId, stage.position) {
-        appear.animateTo(1f, tween(400))
+    val appear = remember(stage.characterId, stage.position) { Animatable(if (reduceMotion) 1f else 0f) }
+    LaunchedEffect(stage.characterId, stage.position, reduceMotion) {
+        if (reduceMotion) appear.snapTo(1f) else appear.animateTo(1f, tween(400))
     }
 
     Image(
@@ -43,7 +43,7 @@ fun BoxScope.CharacterSprite(stage: StageCharacter, spriteResource: String?) {
             .graphicsLayer {
                 scaleX = stage.scale
                 scaleY = stage.scale
-                alpha = appear.value
+                alpha = if (reduceMotion) 1f else appear.value
             }
     )
 }

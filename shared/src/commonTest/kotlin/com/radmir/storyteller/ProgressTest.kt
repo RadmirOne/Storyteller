@@ -177,7 +177,7 @@ class ProgressTest {
         val store = MemoryProgressStore()
         val vm = StoryViewModel(store).apply { loadStory(json) }
         val record = store.read()
-        assertFailsWith<ProgressException> { vm.continueStory(Json.encodeToString(script.copy(title = "Новая версия"))) }
+        assertFailsWith<ProgressException> { vm.continueStory(Json.encodeToString(script.copy(startNodeId = "inherited"))) }
         assertEquals(record, store.read())
         assertEquals("start", vm.currentNode.value!!.id)
         store.write(Json.encodeToString(StoryProgress(script, listOf(ProgressStep("unknown")))))

@@ -16,5 +16,6 @@ fun StoryScript.personalize(text: String, player: PlayerCharacter?): String =
 
 fun StoryScript.personalize(node: DialogueNode, player: PlayerCharacter?): DialogueNode = node.copy(
     text = personalize(node.text, player),
-    choices = node.choices?.map { it.copy(text = personalize(it.text, player)) }
+    choices = node.choices?.map { it.copy(text = personalize(it.text, player),
+        unavailableReason = it.unavailableReason?.let { reason -> personalize(reason, player) }) }
 )

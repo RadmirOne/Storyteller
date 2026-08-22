@@ -13,14 +13,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: set up JDK 11
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
-        distribution: 'temurin'
+        java-version: '21'
+        distribution: 'zulu'
         cache: gradle
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build
+    - name: Test shared logic and bundled routes, build Android
+      run: ./gradlew :shared:testAndroidHostTest :androidApp:assembleDebug
