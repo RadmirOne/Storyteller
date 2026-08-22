@@ -1,0 +1,57 @@
+{
+  "title": "The Mysterious Forest",
+  "startNodeId": "start",
+  "nodes": {
+    "start": {
+      "id": "start",
+      "speaker": "Narrator",
+      "text": "You wake up in a dark forest. The air is thick with the smell of pine and something... metallic.",
+      "choices": [
+        { "id": "choice_left", "text": "Go left towards the sound of water.", "targetNodeId": "river" },
+        { "id": "choice_right", "text": "Go right towards the flickering light.", "targetNodeId": "cabin" }
+      ]
+    },
+    "river": {
+      "id": "river",
+      "speaker": "Narrator",
+      "text": "You reach a rushing river. The water is freezing cold.",
+      "choices": [
+        { "id": "choice_swim", "text": "Try to swim across.", "targetNodeId": "drowned" },
+        { "id": "choice_bridge", "text": "Look for a bridge.", "targetNodeId": "bridge" }
+      ]
+    },
+    "cabin": {
+      "id": "cabin",
+      "speaker": "Old Man",
+      "text": "Welcome, traveler. You look like you've seen better days.",
+      "choices": [
+        { "id": "choice_stay", "text": "Stay by the fire.", "targetNodeId": "fire" },
+        { "id": "choice_leave", "text": "Leave him alone.", "targetNodeId": "start" }
+      ]
+    },
+    "drowned": {
+      "id": "drowned",
+      "speaker": "Narrator",
+      "text": "The current was too strong. You are lost.",
+      "nextNodeId": "game_over"
+    },
+    "bridge": {
+      "id": "bridge",
+      "speaker": "Narrator",
+      "text": "You find a rickety wooden bridge.",
+      "nextNodeId": "cabin"
+    },
+    "fire": {
+      "id": "fire",
+      "speaker": "Old Man",
+      "text": "The fire warms your bones. You feel safe here... for now.",
+      "nextNodeId": "game_over"
+    },
+    "game_over": {
+      "id": "game_over",
+      "speaker": "System",
+      "text": "The End.",
+      "choices": []
+    }
+  }
+}
