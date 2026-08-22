@@ -1,0 +1,496 @@
+{
+  "schemaVersion": 2,
+  "characterAppearance": {
+    "enabled": true,
+    "durationMs": 400,
+    "slideDistance": 1.0,
+    "fade": true
+  },
+  "id": "lighthouse_weekend",
+  "title": "Пока горит маяк",
+  "description": "Выходные на острове, первый свет маяка и два знакомства, которые могут стать чем-то большим. Выберите свой вечер — и не спешите уезжать.",
+  "characters": [
+    {
+      "id": "protagonist",
+      "name": "Вы"
+    },
+    {
+      "id": "mira",
+      "name": "Мира",
+      "spriteResource": "files/characters/mira.png"
+    },
+    {
+      "id": "ilya",
+      "name": "Илья",
+      "spriteResource": "files/characters/ilya.png"
+    },
+    {
+      "id": "mark",
+      "name": "Марк",
+      "spriteResource": "files/characters/mark.png"
+    }
+  ],
+  "startSceneId": "arrival",
+  "startNodeId": "welcome",
+  "scenes": {
+    "arrival": {
+      "id": "arrival",
+      "nodes": {
+        "welcome": {
+          "id": "welcome",
+          "characterId": "mira",
+          "text": "{{playerName}}, наконец-то! Твоя комната готова. А сегодня мы впервые зажжём отреставрированный маяк.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "mira"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "reply"
+        },
+        "reply": {
+          "id": "reply",
+          "characterId": "protagonist",
+          "text": "Я приехала всего на выходные. Но уже рада, что ты меня уговорила.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "ilya"
+        },
+        "ilya": {
+          "id": "ilya",
+          "characterId": "ilya",
+          "text": "Я Илья. Обещаю показать лучший вид с башни. Если не испугаешься ста восьмидесяти ступеней.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "ilya"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "mark"
+        },
+        "mark": {
+          "id": "mark",
+          "characterId": "mark",
+          "text": "А я Марк. У меня предложение без ступеней: вечерняя гавань с катера. Правда, чай придётся держать самой.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "mark"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "smile"
+        },
+        "smile": {
+          "id": "smile",
+          "characterId": "protagonist",
+          "text": "Вы всегда так встречаете гостей? Теперь мне придётся задержаться, чтобы всё успеть.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "invite"
+        },
+        "invite": {
+          "id": "invite",
+          "characterId": "mira",
+          "text": "Сначала зажжём маяк. А потом я отпущу тебя гулять — обещаю не расспрашивать до завтра.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "mira"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "light",
+          "nextSceneId": "tower"
+        }
+      },
+      "backgroundResource": "files/scenes/island_arrival.png"
+    },
+    "tower": {
+      "id": "tower",
+      "nodes": {
+        "light": {
+          "id": "light",
+          "characterId": "ilya",
+          "text": "Получилось. Видишь полосу света на воде? Ради этой минуты я и остался на острове.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "ilya"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "choose"
+        },
+        "choose": {
+          "id": "choose",
+          "characterId": "protagonist",
+          "text": "Красиво. И мне пока совсем не хочется возвращаться домой.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "choices": [
+            {
+              "id": "with_ilya",
+              "targetNodeId": "quiet",
+              "targetSceneId": "ilya_evening",
+              "text": "Остаться у маяка с Ильёй"
+            },
+            {
+              "id": "with_mark",
+              "targetNodeId": "boat",
+              "targetSceneId": "mark_evening",
+              "text": "Прогуляться по гавани с Марком"
+            },
+            {
+              "id": "with_mira",
+              "targetNodeId": "tea",
+              "targetSceneId": "friends",
+              "text": "Выпить чаю с Мирой"
+            }
+          ]
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png"
+    },
+    "ilya_evening": {
+      "id": "ilya_evening",
+      "nodes": {
+        "quiet": {
+          "id": "quiet",
+          "characterId": "ilya",
+          "text": "Я обычно радуюсь, когда экскурсия заканчивается. Сегодня почему-то хочется придумать ещё одну историю.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "ilya"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "answer"
+        },
+        "answer": {
+          "id": "answer",
+          "characterId": "protagonist",
+          "text": "Можешь ничего не придумывать. Мне хорошо и в тишине.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "ask"
+        },
+        "ask": {
+          "id": "ask",
+          "characterId": "ilya",
+          "text": "{{playerName}}, можно я возьму тебя за руку?",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "ilya"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "choices": [
+            {
+              "id": "hold_hand",
+              "targetNodeId": "yes",
+              "targetSceneId": "ilya_evening",
+              "text": "Да. Я тоже этого хотела"
+            },
+            {
+              "id": "just_friends",
+              "targetNodeId": "friend",
+              "targetSceneId": "ilya_evening",
+              "text": "Мне приятно, но давай останемся друзьями"
+            }
+          ]
+        },
+        "yes": {
+          "id": "yes",
+          "characterId": "protagonist",
+          "text": "Да. И завтра я хочу снова подняться сюда. С тобой.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "promise"
+        },
+        "promise": {
+          "id": "promise",
+          "characterId": "ilya",
+          "text": "Тогда завтра встречу тебя у первой ступени. А сегодня ещё немного побудем здесь.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "ilya"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0
+        },
+        "friend": {
+          "id": "friend",
+          "characterId": "ilya",
+          "text": "Конечно. Спасибо, что сказала. Чай и лучшие виды всё равно за мной.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "ilya"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png"
+    },
+    "mark_evening": {
+      "id": "mark_evening",
+      "nodes": {
+        "boat": {
+          "id": "boat",
+          "characterId": "mark",
+          "text": "Катер пока останется у причала. Хочу поговорить с тобой без шума мотора и героических попыток перекричать ветер.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "mark"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "answer"
+        },
+        "answer": {
+          "id": "answer",
+          "characterId": "protagonist",
+          "text": "А я думала, ты зовёшь на прогулку всех пассажирок.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "ask"
+        },
+        "ask": {
+          "id": "ask",
+          "characterId": "mark",
+          "text": "Нет. Только одну, из-за которой я сегодня дважды забыл, куда положил ключи. Встретим рассвет вместе?",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "mark"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "choices": [
+            {
+              "id": "sunrise",
+              "targetNodeId": "yes",
+              "targetSceneId": "mark_evening",
+              "text": "Вместе. И без спешки"
+            },
+            {
+              "id": "just_friends",
+              "targetNodeId": "friend",
+              "targetSceneId": "mark_evening",
+              "text": "Лучше дружеская прогулка"
+            }
+          ]
+        },
+        "yes": {
+          "id": "yes",
+          "characterId": "protagonist",
+          "text": "Вместе. Только обещай, что после рассвета будет ещё и завтрак.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "promise"
+        },
+        "promise": {
+          "id": "promise",
+          "characterId": "mark",
+          "text": "Завтрак, горячий кофе и никаких обратных билетов без твоего решения. До утра, {{playerName}}.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "mark"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0
+        },
+        "friend": {
+          "id": "friend",
+          "characterId": "mark",
+          "text": "Договорились. Без намёков и неловкости. Покажу тебе бухту, которой нет в путеводителе.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "mark"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0
+        }
+      },
+      "backgroundResource": "files/scenes/island_arrival.png"
+    },
+    "friends": {
+      "id": "friends",
+      "nodes": {
+        "tea": {
+          "id": "tea",
+          "characterId": "mira",
+          "text": "Ну что, чай или допрос? Шучу. Я просто рада, что ты здесь.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "mira"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "rest"
+        },
+        "rest": {
+          "id": "rest",
+          "characterId": "protagonist",
+          "text": "Чай. Сегодня мне хочется побыть с подругой и никуда не спешить.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "home"
+        },
+        "home": {
+          "id": "home",
+          "characterId": "mira",
+          "text": "Тогда устраивайся удобнее. Выходные только начинаются.",
+          "stageCharacters": [
+            {
+              "worldX": 0.5,
+              "visible": true,
+              "position": "CENTER",
+              "scale": 1,
+              "groundY": 0.94,
+              "characterId": "mira"
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png"
+    }
+  }
+}
