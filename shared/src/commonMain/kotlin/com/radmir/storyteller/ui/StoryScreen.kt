@@ -1,4 +1,4 @@
-package com.radmir.storyteller.ui
+package com.radmir.storyteller.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState

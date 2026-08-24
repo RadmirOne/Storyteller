@@ -1,56 +1,56 @@
 {
-  "title": "The Mysterious Forest",
+  "title": "Таинственный лес",
   "startNodeId": "start",
   "nodes": {
     "start": {
       "id": "start",
-      "speaker": "Narrator",
-      "text": "You wake up in a dark forest. The air is thick with the smell of pine and something... metallic.",
+      "speaker": "Рассказчик",
+      "text": "Вы просыпаетесь в темном лесу. Воздух пропитан запахом сосны и чем-то... металлическим.",
       "choices": [
-        { "id": "choice_left", "text": "Go left towards the sound of water.", "targetNodeId": "river" },
-        { "id": "choice_right", "text": "Go right towards the flickering light.", "targetNodeId": "cabin" }
+        { "id": "choice_left", "text": "Пойти налево на звук воды.", "targetNodeId": "river" },
+        { "id": "choice_right", "text": "Пойти направо на мерцающий свет.", "targetNodeId": "cabin" }
       ]
     },
     "river": {
       "id": "river",
-      "speaker": "Narrator",
-      "text": "You reach a rushing river. The water is freezing cold.",
+      "speaker": "Рассказчик",
+      "text": "Вы выходите к бурной реке. Вода леденяще холодная.",
       "choices": [
-        { "id": "choice_swim", "text": "Try to swim across.", "targetNodeId": "drowned" },
-        { "id": "choice_bridge", "text": "Look for a bridge.", "targetNodeId": "bridge" }
+        { "id": "choice_swim", "text": "Попробовать переплыть.", "targetNodeId": "drowned" },
+        { "id": "choice_bridge", "text": "Поискать мост.", "targetNodeId": "bridge" }
       ]
     },
     "cabin": {
       "id": "cabin",
-      "speaker": "Old Man",
-      "text": "Welcome, traveler. You look like you've seen better days.",
+      "speaker": "Старик",
+      "text": "Добро пожаловать, путник. Похоже, ты видел лучшие дни.",
       "choices": [
-        { "id": "choice_stay", "text": "Stay by the fire.", "targetNodeId": "fire" },
-        { "id": "choice_leave", "text": "Leave him alone.", "targetNodeId": "start" }
+        { "id": "choice_stay", "text": "Остаться у огня.", "targetNodeId": "fire" },
+        { "id": "choice_leave", "text": "Оставить его в покое.", "targetNodeId": "start" }
       ]
     },
     "drowned": {
       "id": "drowned",
-      "speaker": "Narrator",
-      "text": "The current was too strong. You are lost.",
+      "speaker": "Рассказчик",
+      "text": "Течение было слишком сильным. Вы потерялись.",
       "nextNodeId": "game_over"
     },
     "bridge": {
       "id": "bridge",
-      "speaker": "Narrator",
-      "text": "You find a rickety wooden bridge.",
+      "speaker": "Рассказчик",
+      "text": "Вы находите шаткий деревянный мост.",
       "nextNodeId": "cabin"
     },
     "fire": {
       "id": "fire",
-      "speaker": "Old Man",
-      "text": "The fire warms your bones. You feel safe here... for now.",
+      "speaker": "Старик",
+      "text": "Огонь согревает ваши кости. Вы чувствуете себя в безопасности здесь... пока что.",
       "nextNodeId": "game_over"
     },
     "game_over": {
       "id": "game_over",
-      "speaker": "System",
-      "text": "The End.",
+      "speaker": "Система",
+      "text": "Конец.",
       "choices": []
     }
   }
