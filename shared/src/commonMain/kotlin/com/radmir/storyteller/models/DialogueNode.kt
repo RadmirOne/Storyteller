@@ -9,5 +9,10 @@ data class DialogueNode(
     val text: String,
     val choices: List<Choice>? = null,
     val nextNodeId: String? = null,
-    val imageResource: String? = null
+    val camera: CameraView? = null,
+    val cameraStart: CameraView? = null,
+    val cameraDurationMs: Long? = null,
+    val stageCharacters: List<StageCharacter>? = null,
+    val nextSceneId: String? = null,
+    val nextSceneStartEffect: SceneStartEffect? = null
 )

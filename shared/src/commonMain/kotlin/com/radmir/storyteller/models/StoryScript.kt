@@ -8,6 +8,7 @@ data class StoryScript(
     val title: String,
     val description: String? = null,
     val characters: List<Character> = emptyList(),
+    val startSceneId: String,
     val startNodeId: String,
-    val nodes: Map<String, DialogueNode>
+    val scenes: Map<String, Scene> = emptyMap()
 )

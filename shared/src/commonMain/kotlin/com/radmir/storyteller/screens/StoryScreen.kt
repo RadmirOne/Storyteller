@@ -1,14 +1,19 @@
 package com.radmir.storyteller.screens
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.radmir.storyteller.screens.scene.CharacterSprite
+import com.radmir.storyteller.screens.scene.DialogueOverlay
+import com.radmir.storyteller.screens.scene.SceneBackground
 import com.radmir.storyteller.viewmodel.StoryViewModel
 
 @Composable
@@ -16,14 +21,21 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
     val gameState by viewModel.gameState.collectAsState()
     val currentNode by viewModel.currentNode.collectAsState()
     val currentScript by viewModel.currentScript.collectAsState()
+    val sceneState by viewModel.sceneUiState.collectAsState()
 
     // Use local variables to facilitate smart casting and avoid issues with delegated properties
     val current = currentNode
     val script = currentScript
+    val scene = sceneState
 
-    if (gameState == null || current == null || script == null) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Text("Загрузка...")
+    if (gameState == null || current == null || script == null || scene == null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("Загрузка...", color = Color.White)
         }
         return
     }
@@ -31,50 +43,26 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
     val character = script.characters.find { it.id == current.characterId }
     val speakerName = character?.name ?: "Неизвестный"
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .background(Color.Black)
     ) {
-        Text(
-            text = speakerName,
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-            color = MaterialTheme.colorScheme.primary
-        )
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        Text(
-            text = current.text,
-            style = MaterialTheme.typography.bodyLarge
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        if (current.choices != null && current.choices.isNotEmpty()) {
-            current.choices.forEach { choice ->
-                Button(
-                    onClick = { viewModel.selectChoice(choice.id) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(choice.text)
-                }
-            }
-        } else if (current.nextNodeId != null) {
-            Button(
-                onClick = { viewModel.advance() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Далее")
-            }
-        } else {
-            Text(
-                text = "Конец истории",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.outline
+        SceneBackground(state = scene)
+        scene.stage.forEach { stageCharacter ->
+            val sprite = script.characters.find { it.id == stageCharacter.characterId }
+            CharacterSprite(
+                stage = stageCharacter,
+                spriteResource = sprite?.spriteResource
             )
         }
+        DialogueOverlay(
+            speakerName = speakerName,
+            text = current.text,
+            choices = current.choices,
+            hasNext = current.nextNodeId != null,
+            onSelectChoice = { viewModel.selectChoice(it) },
+            onAdvance = { viewModel.advance() }
+        )
     }
 }
