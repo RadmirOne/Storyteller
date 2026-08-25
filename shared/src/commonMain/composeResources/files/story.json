@@ -1,10 +1,17 @@
 {
+  "id": "forest_mystery",
   "title": "Таинственный лес",
+  "description": "Приключение в таинственном лесу.",
+  "characters": [
+    { "id": "narrator", "name": "Рассказчик" },
+    { "id": "old_man", "name": "Старик" },
+    { "id": "system", "name": "Система" }
+  ],
   "startNodeId": "start",
   "nodes": {
     "start": {
       "id": "start",
-      "speaker": "Рассказчик",
+      "characterId": "narrator",
       "text": "Вы просыпаетесь в темном лесу. Воздух пропитан запахом сосны и чем-то... металлическим.",
       "choices": [
         { "id": "choice_left", "text": "Пойти налево на звук воды.", "targetNodeId": "river" },
@@ -13,7 +20,7 @@
     },
     "river": {
       "id": "river",
-      "speaker": "Рассказчик",
+      "characterId": "narrator",
       "text": "Вы выходите к бурной реке. Вода леденяще холодная.",
       "choices": [
         { "id": "choice_swim", "text": "Попробовать переплыть.", "targetNodeId": "drowned" },
@@ -22,7 +29,7 @@
     },
     "cabin": {
       "id": "cabin",
-      "speaker": "Старик",
+      "characterId": "old_man",
       "text": "Добро пожаловать, путник. Похоже, ты видел лучшие дни.",
       "choices": [
         { "id": "choice_stay", "text": "Остаться у огня.", "targetNodeId": "fire" },
@@ -31,25 +38,25 @@
     },
     "drowned": {
       "id": "drowned",
-      "speaker": "Рассказчик",
+      "characterId": "narrator",
       "text": "Течение было слишком сильным. Вы потерялись.",
       "nextNodeId": "game_over"
     },
     "bridge": {
       "id": "bridge",
-      "speaker": "Рассказчик",
+      "characterId": "narrator",
       "text": "Вы находите шаткий деревянный мост.",
       "nextNodeId": "cabin"
     },
     "fire": {
       "id": "fire",
-      "speaker": "Старик",
+      "characterId": "old_man",
       "text": "Огонь согревает ваши кости. Вы чувствуете себя в безопасности здесь... пока что.",
       "nextNodeId": "game_over"
     },
     "game_over": {
       "id": "game_over",
-      "speaker": "Система",
+      "characterId": "system",
       "text": "Конец.",
       "choices": []
     }

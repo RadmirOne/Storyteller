@@ -15,16 +15,21 @@ import com.radmir.storyteller.viewmodel.StoryViewModel
 fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
     val gameState by viewModel.gameState.collectAsState()
     val currentNode by viewModel.currentNode.collectAsState()
+    val currentScript by viewModel.currentScript.collectAsState()
 
-    // Use a local variable to facilitate smart casting
+    // Use local variables to facilitate smart casting and avoid issues with delegated properties
     val current = currentNode
+    val script = currentScript
 
-    if (gameState == null || current == null) {
+    if (gameState == null || current == null || script == null) {
         Box(modifier = Modifier.fillMaxSize()) {
             Text("Загрузка...")
         }
         return
     }
+
+    val character = script.characters.find { it.id == current.characterId }
+    val speakerName = character?.name ?: "Неизвестный"
 
     Column(
         modifier = Modifier
@@ -34,7 +39,7 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = current.speaker,
+            text = speakerName,
             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.primary
         )

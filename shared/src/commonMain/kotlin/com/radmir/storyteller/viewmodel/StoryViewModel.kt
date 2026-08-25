@@ -20,6 +20,9 @@ class StoryViewModel : ViewModel() {
     private val _currentNode = MutableStateFlow<DialogueNode?>(null)
     val currentNode: StateFlow<DialogueNode?> = _currentNode.asStateFlow()
 
+    private val _currentScript = MutableStateFlow<StoryScript?>(null)
+    val currentScript: StateFlow<StoryScript?> = _currentScript.asStateFlow()
+
     private val _history = MutableStateFlow<List<StoryScript>>(emptyList())
     val history: StateFlow<List<StoryScript>> = _history.asStateFlow()
 
@@ -29,6 +32,7 @@ class StoryViewModel : ViewModel() {
         if (initialState != null) {
             _gameState.value = initialState
             _currentNode.value = engine.getCurrentNode()
+            _currentScript.value = script
             
             // Add to history if not already present
             val currentHistory = _history.value.toMutableList()
