@@ -13,11 +13,7 @@ fun cameraTransform(camera: CameraView, container: Size, image: Size): CameraTra
     if (container.width <= 0f || container.height <= 0f || image.width <= 0f || image.height <= 0f) {
         return CameraTransform(1f, 0f, 0f)
     }
-    val coverScale = maxOf(
-        container.width / image.width,
-        container.height / image.height
-    )
-    val scale = coverScale * camera.zoom
+    val scale = container.height / image.height
     val imageWidth = image.width * scale
     val imageHeight = image.height * scale
     val translationX: Float
@@ -28,11 +24,6 @@ fun cameraTransform(camera: CameraView, container: Size, image: Size): CameraTra
     } else {
         translationX = (container.width - imageWidth) / 2f
     }
-    if (imageHeight >= container.height) {
-        translationY = (container.height / 2f - camera.focusY * imageHeight)
-            .coerceIn(container.height - imageHeight, 0f)
-    } else {
-        translationY = (container.height - imageHeight) / 2f
-    }
+    translationY = 0f
     return CameraTransform(scale, translationX, translationY)
 }
