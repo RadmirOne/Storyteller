@@ -21,7 +21,7 @@ class PlayerCharacterTest {
             "start" to Scene(
                 id = "start",
                 backgroundResource = "files/background.png",
-                nodes = mapOf("first" to DialogueNode("first", null, "Начало"))
+                nodes = mapOf("first" to DialogueNode("first", "narrator", "Начало"))
             )
         )
     )
