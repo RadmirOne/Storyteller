@@ -6,12 +6,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ProgressStep(val choiceId: String? = null)
 
-/** Keep the exact script so changed content cannot silently reinterpret a saved route. */
+/**
+ * Keep the exact script so changed content cannot silently reinterpret a saved route.
+ * playerCharacter belongs only to this story playthrough; it is not an app-wide profile.
+ */
 @Serializable
 data class StoryProgress(
     val story: StoryScript,
     val steps: List<ProgressStep> = emptyList(),
-    val version: Int = 1
+    val version: Int = 1,
+    val playerCharacter: PlayerCharacter? = null
 )
 
 data class JournalEntry(
