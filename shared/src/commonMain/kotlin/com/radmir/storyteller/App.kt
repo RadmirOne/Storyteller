@@ -1,6 +1,5 @@
 package com.radmir.storyteller
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +23,6 @@ import com.radmir.storyteller.viewmodel.StoryViewModel
 @Preview
 fun App() {
     MaterialTheme {
-        var showStories by remember { mutableStateOf(false) }
         var showStory by remember { mutableStateOf(false) }
 
         val storyViewModel = remember { StoryViewModel() }
@@ -36,20 +34,16 @@ fun App() {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Button(onClick = { showStories = !showStories }) {
-                Text("Open Stories")
-            }
-
-            AnimatedVisibility(showStories) {
+            if (showStory) {
+                Button(onClick = { showStory = false }) {
+                    Text("К историям")
+                }
+                StoryScreen(viewModel = storyViewModel)
+            } else {
                 StoriesScreen(onStoryStarted = { json ->
                     storyViewModel.loadStory(json)
                     showStory = true
-                    showStories = false
                 })
-            }
-
-            AnimatedVisibility(showStory) {
-                StoryScreen(viewModel = storyViewModel)
             }
         }
     }

@@ -13,12 +13,12 @@ class CameraTransformTest {
     private val image = Size(1600f, 900f)
 
     @Test
-    fun zoomOneCoversContainerWithClampedOffset() {
+    fun narrowImageIsCentered() {
         val t = cameraTransform(CameraView(0.5f), container, image)
 
-        assertEquals(0.5556f, t.scale)
+        assertEquals(0.5556f, t.scale, 0.0001f)
         // imageWidth = 1600 * 0.5556 = 888.88... < 1000 -> centered: (1000 - 888.88) / 2 = 55.56
-        assertEquals(55.56f, t.translationX)
+        assertEquals(55.56f, t.translationX, 0.01f)
         assertEquals(0f, t.translationY)
     }
 
@@ -27,7 +27,7 @@ class CameraTransformTest {
         val t = cameraTransform(CameraView(0.75f), container, image)
 
         // imageWidth = 888.88... < 1000 -> centered
-        assertEquals(55.56f, t.translationX)
+        assertEquals(55.56f, t.translationX, 0.01f)
         assertEquals(0f, t.translationY)
     }
 
@@ -38,5 +38,13 @@ class CameraTransformTest {
         assertEquals(1f, t.scale)
         assertEquals(0f, t.translationX)
         assertEquals(0f, t.translationY)
+    }
+
+    @Test fun wideBackgroundPansAndClampsAtBothEdges() {
+        val viewport = Size(400f, 800f)
+        val panorama = Size(1600f, 800f)
+        assertEquals(0f, cameraTransform(CameraView(0f), viewport, panorama).translationX)
+        assertEquals(-600f, cameraTransform(CameraView(0.5f), viewport, panorama).translationX)
+        assertEquals(-1200f, cameraTransform(CameraView(1f), viewport, panorama).translationX)
     }
 }

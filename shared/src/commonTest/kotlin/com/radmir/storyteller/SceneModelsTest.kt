@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class SceneModelsTest {
-    private val json = Json { ignoreUnknownKeys = true }
+    private val json = Json
 
     private val scriptJson = """
         {
@@ -34,8 +34,8 @@ class SceneModelsTest {
                   "id": "start",
                   "characterId": "narrator",
                   "text": "Вы просыпаетесь в темном лесу.",
-                  "cameraStart": { "focusX": 0.25, "focusY": 0.6, "zoom": 1.4 },
-                  "camera": { "focusX": 0.75, "focusY": 0.5, "zoom": 1.0 },
+                  "cameraStart": { "focusX": 0.25 },
+                  "camera": { "focusX": 0.75 },
                   "cameraDurationMs": 4000,
                   "choices": [
                     {
@@ -98,8 +98,8 @@ class SceneModelsTest {
         val script = json.decodeFromString<StoryScript>(scriptJson)
         val startNode = script.scenes.getValue("forest").nodes.getValue("start")
 
-        assertEquals(CameraView(0.75f, 0.5f, 1.0f), startNode.camera)
-        assertEquals(CameraView(0.25f, 0.6f, 1.4f), startNode.cameraStart)
+        assertEquals(CameraView(0.75f), startNode.camera)
+        assertEquals(CameraView(0.25f), startNode.cameraStart)
         assertEquals(4000L, startNode.cameraDurationMs)
 
         val riverNode = script.scenes.getValue("river").nodes.getValue("river_bank")
@@ -115,8 +115,8 @@ class SceneModelsTest {
     fun defaultsAreApplied() {
         val script = json.decodeFromString<StoryScript>(scriptJson)
         val choice = script.scenes.getValue("forest").nodes.getValue("start").choices!!.first()
-        assertEquals(null, choice.targetSceneId)
-        assertEquals(null, choice.targetSceneStartEffect)
+        assertEquals("river", choice.targetSceneId)
+        assertEquals(SceneStartEffect.FADE, choice.targetSceneStartEffect)
 
         val gameOver = script.scenes.getValue("ending").nodes.getValue("game_over")
         assertEquals(null, gameOver.camera)
@@ -125,6 +125,6 @@ class SceneModelsTest {
 
         val emptyScene = Scene(id = "empty", backgroundResource = "files/scenes/x.png")
         assertTrue(emptyScene.nodes.isEmpty())
-        assertEquals(CameraView(), CameraView(0.5f, 0.5f, 1f))
+        assertEquals(CameraView(), CameraView(0.5f))
     }
 }

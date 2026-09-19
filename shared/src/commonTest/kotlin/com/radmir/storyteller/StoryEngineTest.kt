@@ -6,6 +6,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.test.assertFailsWith
+import com.radmir.storyteller.repository.StoryValidationException
 
 class StoryEngineTest {
 
@@ -146,7 +148,7 @@ class StoryEngineTest {
     }
 
     @Test
-    fun invalidTargetNodeReturnsCurrentState() {
+    fun invalidTargetNodeIsRejectedBeforeStarting() {
         val invalidJson = """
             {
               "id": "bad",
@@ -177,11 +179,9 @@ class StoryEngineTest {
               }
             }
         """.trimIndent()
-        val engine = StoryEngine(StoryRepository()).apply { initialize(invalidJson) }
-
-        val state = engine.selectChoice("broken")
-
-        assertEquals("a1", state!!.currentNodeId)
+        val engine = newEngine()
+        assertFailsWith<StoryValidationException> { engine.initialize(invalidJson) }
         assertEquals("a1", engine.getGameState()!!.currentNodeId)
+        assertEquals("a1", engine.getCurrentNode()!!.id)
     }
 }

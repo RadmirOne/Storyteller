@@ -1,11 +1,18 @@
 {
+  "schemaVersion": 1,
   "id": "forest_mystery",
-  "title": "Таинственный лес",
-  "description": "Приключение в таинственном лесу.",
+  "title": "До третьего удара",
+  "description": "Ночная переправа, невыполненные обещания и четыре способа закончить дорогу. Демонстрационная история движка.",
   "characters": [
-    { "id": "narrator", "name": "Рассказчик" },
-    { "id": "old_man", "name": "Старик", "spriteResource": "files/characters/old_man.png" },
-    { "id": "system", "name": "Система" }
+    {
+      "id": "narrator",
+      "name": "Рассказчик"
+    },
+    {
+      "id": "old_man",
+      "name": "Перевозчик",
+      "spriteResource": "files/characters/old_man.png"
+    }
   ],
   "startSceneId": "forest",
   "startNodeId": "start",
@@ -17,23 +24,43 @@
         "start": {
           "id": "start",
           "characterId": "narrator",
-          "text": "Вы просыпаетесь в темном лесу. Воздух пропитан запахом сосны и чем-то... металлическим.",
-          "cameraStart": { "focusX": 0.5 },
-          "camera": { "focusX": 0.5 },
-          "cameraDurationMs": 4000,
+          "text": "На последней электричке вы ехали к сестре. В кармане осталась её записка: «Если опоздаешь, не ищи короткой дороги через лес. Я подожду». Теперь под ногами хвоя, рельсов не видно, а часы показывают без трёх минут полночь. Секундная стрелка дрожит на месте.",
+          "cameraStart": {
+            "focusX": 0
+          },
+          "camera": {
+            "focusX": 1
+          },
+          "cameraDurationMs": 5000,
+          "nextNodeId": "bell"
+        },
+        "bell": {
+          "id": "bell",
+          "characterId": "narrator",
+          "text": "Из темноты доносится звон. Один удар, пауза, второй. Между деревьями тянется мокрая верёвка, но колокола на ней нет. Вы пробуете позвать сестру. Лес возвращает голос так быстро, будто кто-то стоит совсем рядом и повторяет каждое слово.",
+          "camera": {
+            "focusX": 0.25
+          },
+          "cameraDurationMs": 2200,
+          "nextNodeId": "note"
+        },
+        "note": {
+          "id": "note",
+          "characterId": "narrator",
+          "text": "На обороте записки проступают чужие слова: «До третьего удара реши, что понесёшь через воду». Чернила ещё влажные. Справа мелькает тёплый свет, слева шумит река. Вдалеке скрипят половицы — или ветви. Вы можете выбрать дорогу, но стоять здесь до утра почему-то кажется худшим решением.",
           "choices": [
             {
-              "id": "choice_left",
-              "text": "Пойти налево на звук воды.",
+              "id": "water",
+              "text": "Сначала осмотреть берег",
+              "targetNodeId": "bank",
               "targetSceneId": "river",
-              "targetNodeId": "river_bank",
               "targetSceneStartEffect": "FADE"
             },
             {
-              "id": "choice_right",
-              "text": "Пойти направо на мерцающий свет.",
+              "id": "light",
+              "text": "Пойти к свету хижины",
+              "targetNodeId": "door",
               "targetSceneId": "cabin",
-              "targetNodeId": "cabin_greet",
               "targetSceneStartEffect": "FADE"
             }
           ]
@@ -44,34 +71,65 @@
       "id": "river",
       "backgroundResource": "files/scenes/river.png",
       "nodes": {
-        "river_bank": {
-          "id": "river_bank",
+        "bank": {
+          "id": "bank",
           "characterId": "narrator",
-          "text": "Вы выходите к бурной реке. Вода леденяще холодная.",
-          "cameraStart": { "focusX": 0.3 },
-          "camera": { "focusX": 0.7 },
-          "cameraDurationMs": 2500,
+          "text": "Река уже, чем представлялось по шуму. На противоположном берегу горит один неподвижный огонёк. Между берегами натянут трос, к нему привязана пустая лодка. Она стоит у дальнего причала, хотя течение должно было давно унести её вниз. Рядом на столбе вырезано: «Перевозчик отвечает только на свой звон».",
+          "cameraStart": {
+            "focusX": 0.05
+          },
+          "camera": {
+            "focusX": 0.95
+          },
+          "cameraDurationMs": 4200,
+          "nextNodeId": "inspect"
+        },
+        "inspect": {
+          "id": "inspect",
+          "characterId": "narrator",
+          "text": "Под тросом висит медное кольцо. На мокрой доске лежит варежка — такая же, какую сестра потеряла много лет назад. Вы помните тот день: она ждала у школы, а вы забыли прийти. Можно позвать перевозчика сейчас или сперва понять, почему река показывает именно это.",
           "choices": [
-            { "id": "choice_swim", "text": "Попробовать переплыть.", "targetNodeId": "drowned" },
-            { "id": "choice_bridge", "text": "Поискать мост.", "targetNodeId": "bridge" }
+            {
+              "id": "ring",
+              "text": "Потянуть за медное кольцо",
+              "targetNodeId": "answer"
+            },
+            {
+              "id": "read",
+              "text": "Прочитать надписи на причале",
+              "targetNodeId": "marks"
+            }
           ]
         },
-        "drowned": {
-          "id": "drowned",
+        "answer": {
+          "id": "answer",
           "characterId": "narrator",
-          "text": "Течение было слишком сильным. Вы потерялись.",
-          "camera": { "focusX": 0.5 },
-          "nextSceneId": "ending",
-          "nextNodeId": "game_over",
-          "nextSceneStartEffect": "FADE"
+          "text": "Кольцо холодит ладонь. Вместо звона из-за воды слышится ваш собственный голос: «Ещё минуту. Я скоро». Это фраза, которой вы когда-то отвечали на каждый звонок сестры. Лодка делает короткое движение к вам и останавливается. За спиной загорается окно хижины.",
+          "cameraStart": {
+            "focusX": 0.95
+          },
+          "camera": {
+            "focusX": 0.1
+          },
+          "cameraDurationMs": 1800,
+          "nextNodeId": "marks"
         },
-        "bridge": {
-          "id": "bridge",
+        "marks": {
+          "id": "marks",
           "characterId": "narrator",
-          "text": "Вы находите шаткий деревянный мост.",
-          "camera": { "focusX": 0.6 },
+          "text": "На перилах десятки имён. Рядом с каждым — не дата, а короткое обещание: «Вернусь к ужину», «Напишу первым», «Не оставлю одного». Последняя строка пустая. Вы отдёргиваете руку: в древесине медленно появляются первые буквы вашего имени.",
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "to_cabin"
+        },
+        "to_cabin": {
+          "id": "to_cabin",
+          "characterId": "narrator",
+          "text": "Вы не дописываете обещание. За ответами придётся идти к огню. Тропинка от причала заканчивается ступенями хижины; на них нет ни одного следа, кроме ваших. Изнутри кто-то отодвигает второй стул — ровно в тот момент, когда вы поднимаете руку, чтобы постучать.",
+          "nextNodeId": "door",
           "nextSceneId": "cabin",
-          "nextNodeId": "cabin_greet",
           "nextSceneStartEffect": "FADE"
         }
       }
@@ -80,35 +138,383 @@
       "id": "cabin",
       "backgroundResource": "files/scenes/cabin.png",
       "nodes": {
-        "cabin_greet": {
-          "id": "cabin_greet",
+        "door": {
+          "id": "door",
           "characterId": "old_man",
-          "text": "Добро пожаловать, путник. Похоже, ты видел лучшие дни.",
-          "camera": { "focusX": 0.5 },
+          "text": "Дверь открыта. Старик у порога держит фонарь с погасшим фитилём. «Заходи. До третьего удара ещё есть время». Он не спрашивает имени и не смотрит на записку, которую вы всё ещё сжимаете в кулаке.",
           "stageCharacters": [
-            { "characterId": "old_man", "position": "CENTER" }
+            {
+              "characterId": "old_man",
+              "position": "LEFT",
+              "scale": 0.85,
+              "visible": true
+            }
+          ],
+          "cameraStart": {
+            "focusX": 0
+          },
+          "camera": {
+            "focusX": 0.65
+          },
+          "cameraDurationMs": 3200,
+          "nextNodeId": "tea"
+        },
+        "tea": {
+          "id": "tea",
+          "characterId": "old_man",
+          "text": "«Чай настоящий, стул тоже. Здесь не всё обман». Старик ставит перед вами чашку. На столе лежат ключ, маленький колокол и книга без обложки. В раскрытой книге вы замечаете собственное имя, но старик мягко прикрывает страницу ладонью.",
+          "nextNodeId": "question"
+        },
+        "question": {
+          "id": "question",
+          "characterId": "old_man",
+          "text": "«Это не суд, — говорит он. — Река никого не наказывает. Она удерживает незаконченные дороги. Иногда дорогу можно закончить, просто сказав правду». Вы вспоминаете сообщение сестры, на которое не ответили перед поездкой. В нём было всего два слова: «Ты приедешь?»",
+          "stageCharacters": [
+            {
+              "characterId": "old_man",
+              "position": "CENTER",
+              "scale": 1,
+              "visible": true
+            }
           ],
           "choices": [
-            { "id": "choice_stay", "text": "Остаться у огня.", "targetNodeId": "fire" },
             {
-              "id": "choice_leave",
-              "text": "Оставить его в покое.",
-              "targetSceneId": "forest",
-              "targetNodeId": "start",
-              "targetSceneStartEffect": "FADE"
+              "id": "ask_keeper",
+              "text": "Спросить, почему старик остался",
+              "targetNodeId": "keeper"
+            },
+            {
+              "id": "ask_rules",
+              "text": "Спросить, как попасть домой",
+              "targetNodeId": "rules"
             }
           ]
         },
-        "fire": {
-          "id": "fire",
+        "keeper": {
+          "id": "keeper",
           "characterId": "old_man",
-          "text": "Огонь согревает ваши кости. Вы чувствуете себя в безопасности здесь... пока что.",
-          "camera": { "focusX": 0.3 },
+          "text": "«Я обещал проводить одного человека до станции. Решил, что он и сам найдёт дорогу». Старик вращает чашку, не отпивая. «Потом долго уверял себя, что виноват туман. Здесь удобно ждать: никто не требует признать, что ты уже мог уйти». Он впервые поднимает на вас глаза.",
+          "nextNodeId": "keeper_reply"
+        },
+        "keeper_reply": {
+          "id": "keeper_reply",
+          "characterId": "narrator",
+          "text": "Вы спрашиваете, можно ли уйти вдвоём. Старик долго молчит. За окном вода отражает свет, которого нет в комнате. «Ключ открывает лодку. Колокол зовёт её. Но если я отпущу верёвку, кто встретит следующего путника?» Вопрос звучит как привычная отговорка, в которую он сам устал верить.",
           "stageCharacters": [
-            { "characterId": "old_man", "position": "LEFT" }
+            {
+              "characterId": "old_man",
+              "position": "RIGHT",
+              "scale": 0.9,
+              "visible": true
+            }
           ],
+          "camera": {
+            "focusX": 0.9
+          },
+          "cameraDurationMs": 1800,
+          "nextNodeId": "rules"
+        },
+        "rules": {
+          "id": "rules",
+          "characterId": "old_man",
+          "text": "«Возьми ключ — сможешь переправиться один. Возьми колокол — сможешь позвать того, кто останется. Или дождись утра здесь». Старик указывает на стену: на ней висит календарь, в котором на каждом листе одна и та же дата. «Только не называй ожидание выбором, если это страх».",
+          "stageCharacters": [
+            {
+              "characterId": "old_man",
+              "position": "RIGHT",
+              "scale": 0.9,
+              "visible": true
+            }
+          ],
+          "nextNodeId": "lamp"
+        },
+        "lamp": {
+          "id": "lamp",
+          "characterId": "narrator",
+          "text": "Фонарь у двери вспыхивает. Старик отходит за перегородку искать масло, и на мгновение кажется, что разговора вовсе не было. Чашек на столе по-прежнему две. Из соседней комнаты слышно: «Если решишь уходить, не обещай вернуться из вежливости».",
+          "stageCharacters": [
+            {
+              "characterId": "old_man",
+              "position": "RIGHT",
+              "scale": 0.9,
+              "visible": false
+            }
+          ],
+          "cameraStart": {
+            "focusX": 0.9
+          },
+          "camera": {
+            "focusX": 0.15
+          },
+          "cameraDurationMs": 2600,
+          "nextNodeId": "empty"
+        },
+        "empty": {
+          "id": "empty",
+          "characterId": "narrator",
+          "text": "Вы подходите к окну. В стекле отражается пустая комната, хотя за перегородкой ещё скрипит пол. Теперь видно главное: трос у реки продолжается до хижины. Всё это время старик удерживал лодку рукой. Рядом с его стулом в полу вытерта глубокая борозда.",
+          "stageCharacters": [],
+          "nextNodeId": "return"
+        },
+        "return": {
+          "id": "return",
+          "characterId": "narrator",
+          "text": "Старик возвращается без масла. «Закончилось», — говорит он и садится. Вы понимаете: он боится не темноты. Он боится снова оказаться человеком, который может ошибиться. Вы кладёте записку сестры на стол, чтобы не прятаться за красивыми словами.",
+          "stageCharacters": [
+            {
+              "characterId": "old_man",
+              "position": "CENTER",
+              "scale": 1.05,
+              "visible": true
+            }
+          ],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 1200,
+          "nextNodeId": "decision"
+        },
+        "decision": {
+          "id": "decision",
+          "characterId": "narrator",
+          "text": "Второй удар колокола звучит прямо под полом. Старик протягивает вам раскрытую ладонь: на ней лежит ключ. Колокол остаётся на столе. За окном начинается дождь, но огонёк на другом берегу не гаснет.",
+          "choices": [
+            {
+              "id": "key",
+              "text": "Взять ключ и возвращаться к сестре",
+              "targetNodeId": "alone",
+              "targetSceneId": "crossing",
+              "targetSceneStartEffect": "FADE"
+            },
+            {
+              "id": "together",
+              "text": "Взять колокол: «Пойдёмте со мной»",
+              "targetNodeId": "invitation"
+            },
+            {
+              "id": "stay",
+              "text": "Остаться и выслушать старика до утра",
+              "targetNodeId": "stay"
+            }
+          ]
+        },
+        "invitation": {
+          "id": "invitation",
+          "characterId": "narrator",
+          "text": "«Я не могу обещать, что там вас ждут, — говорите вы. — И не знаю, простят ли. Но вы можете спросить сами». Старик смотрит на колокол так, будто видит его впервые. Потом встаёт. Вы не забираете у него верёвку: ждёте, пока он сам разожмёт пальцы.",
+          "stageCharacters": [
+            {
+              "characterId": "old_man",
+              "position": "LEFT",
+              "scale": 0.95,
+              "visible": true
+            }
+          ],
+          "nextNodeId": "release"
+        },
+        "release": {
+          "id": "release",
+          "characterId": "narrator",
+          "text": "Верёвка тихо падает на пол. Ничего не рушится. Старик удивлённо смеётся, затем смущается собственного смеха. «Я думал, будет громче». Он берёт погасший фонарь. На пороге вы оба оглядываетесь; две чашки на столе уже пусты.",
+          "nextNodeId": "together",
+          "nextSceneId": "crossing",
+          "nextSceneStartEffect": "FADE"
+        },
+        "stay": {
+          "id": "stay",
+          "characterId": "narrator",
+          "text": "Вы садитесь напротив. «Расскажите, кого вы не проводили». Старик называет имя, затем вспоминает смешную шапку, спор о погоде и купленный на станции пирог. История перестаёт быть оправданием и становится воспоминанием. Вы слушаете, хотя третий удар уже близко.",
+          "stageCharacters": [
+            {
+              "characterId": "old_man",
+              "position": "LEFT",
+              "scale": 1,
+              "visible": true
+            }
+          ],
+          "nextNodeId": "stay_choice"
+        },
+        "stay_choice": {
+          "id": "stay_choice",
+          "characterId": "narrator",
+          "text": "На календаре шевелится уголок листа. Вы можете остаться на эту ночь осознанно — или уйти сейчас, пока лодка доступна. Старик больше не пытается задержать вас. «Спасибо, что дослушал», — говорит он. Снаружи дождь понемногу стихает.",
+          "choices": [
+            {
+              "id": "night",
+              "text": "Остаться: завтра вместе искать дорогу",
+              "targetNodeId": "keeper_end",
+              "targetSceneId": "ending",
+              "targetSceneStartEffect": "NONE"
+            },
+            {
+              "id": "leave_now",
+              "text": "Предложить закончить разговор на другом берегу",
+              "targetNodeId": "invitation"
+            }
+          ]
+        }
+      }
+    },
+    "crossing": {
+      "id": "crossing",
+      "backgroundResource": "files/scenes/river.png",
+      "nodes": {
+        "alone": {
+          "id": "alone",
+          "characterId": "narrator",
+          "text": "У реки никого нет. Ключ подходит к замку на тросе, и лодка сама скользит к ближнему причалу. Из хижины не видно света. Вы садитесь на скамью и впервые замечаете, как сильно устали. Дом совсем близко; можно просто оттолкнуться.",
+          "cameraStart": {
+            "focusX": 1
+          },
+          "camera": {
+            "focusX": 0
+          },
+          "cameraDurationMs": 3500,
+          "nextNodeId": "alone_choice"
+        },
+        "alone_choice": {
+          "id": "alone_choice",
+          "characterId": "narrator",
+          "text": "В кармане шуршит записка. Вы можете вернуться к тому, кто ждёт вас, не решая за старика его жизнь. Но можно ещё раз окликнуть его и оставить возможность ответить. Оба решения требуют честности: времени на бесконечные обещания больше нет.",
+          "choices": [
+            {
+              "id": "depart",
+              "text": "Переправиться и ответить сестре",
+              "targetNodeId": "home_trip",
+              "conditions": {
+                "resolve": 0
+              }
+            },
+            {
+              "id": "call",
+              "text": "Окликнуть старика перед отплытием",
+              "targetNodeId": "call"
+            }
+          ]
+        },
+        "call": {
+          "id": "call",
+          "characterId": "narrator",
+          "text": "Вы зовёте не перевозчика, а человека. «Если хотите идти, я подожду до третьего удара!» На тропинке появляется слабый огонёк. Старик идёт медленно, но не останавливается. В руках у него колокол. «Лучше поздно ответить, чем снова промолчать», — говорит он.",
+          "stageCharacters": [
+            {
+              "characterId": "old_man",
+              "position": "RIGHT",
+              "scale": 0.8,
+              "visible": true
+            }
+          ],
+          "nextNodeId": "together_board"
+        },
+        "together": {
+          "id": "together",
+          "characterId": "narrator",
+          "text": "Река встречает вас тишиной. Трос ослаб, лодка покачивается посредине потока. Вы ставите колокол на край причала. Один короткий звон — и лодка поворачивается к берегу. Только после этого старик выходит из темноты на доски.",
+          "cameraStart": {
+            "focusX": 0.1
+          },
+          "camera": {
+            "focusX": 0.9
+          },
+          "cameraDurationMs": 4000,
+          "nextNodeId": "together_board"
+        },
+        "together_board": {
+          "id": "together_board",
+          "characterId": "narrator",
+          "text": "Старик садится на корме. Без привычной верёвки он не знает, куда деть руки. Вы протягиваете ему весло. Теперь никто не обязан удерживать чужую дорогу в одиночку. Когда лодка отходит, хижина исчезает за деревьями; остаётся обычный лес.",
+          "stageCharacters": [
+            {
+              "characterId": "old_man",
+              "position": "RIGHT",
+              "scale": 0.8,
+              "visible": true
+            }
+          ],
+          "nextNodeId": "midstream"
+        },
+        "midstream": {
+          "id": "midstream",
+          "characterId": "narrator",
+          "text": "Посреди реки слышится третий удар. На миг вода становится зеркалом, и в нём видны две дороги: освещённая платформа и тихий причал с длинной цепочкой огней. Старик спрашивает, какой берег ваш. Вы узнаёте станционный фонарь, но любопытство не отпускает.",
+          "cameraStart": {
+            "focusX": 0.9
+          },
+          "camera": {
+            "focusX": 0.1
+          },
+          "cameraDurationMs": 4500,
+          "choices": [
+            {
+              "id": "station",
+              "text": "Направить лодку к станции",
+              "targetNodeId": "shared_trip"
+            },
+            {
+              "id": "lights",
+              "text": "Подойти к цепочке огней",
+              "targetNodeId": "lights"
+            }
+          ]
+        },
+        "lights": {
+          "id": "lights",
+          "characterId": "narrator",
+          "text": "Каждый огонёк оказывается фонарём на пустой лодке. Здесь ждут дороги, которые ещё никто не закончил. Старик качает головой: «Нам не нужно проживать их все». Среди отражений вы видите лицо сестры; она смотрит не на реку, а на экран телефона.",
+          "stageCharacters": [
+            {
+              "characterId": "old_man",
+              "position": "LEFT",
+              "scale": 0.85,
+              "visible": true
+            }
+          ],
+          "nextNodeId": "lights_choice"
+        },
+        "lights_choice": {
+          "id": "lights_choice",
+          "characterId": "narrator",
+          "text": "Колокол нагрелся в вашей ладони. Можно разбудить весь причал, чтобы путники нашли свои лодки, но тогда ваша переправа закончится здесь. Можно оставить фонарь на досках и плыть домой. Вы не обязаны спасать всех, чтобы заслужить возвращение.",
+          "choices": [
+            {
+              "id": "beacon",
+              "text": "Остаться и зажечь огни для следующих путников",
+              "targetNodeId": "beacon_trip"
+            },
+            {
+              "id": "return_home",
+              "text": "Оставить фонарь и вернуться к станции",
+              "targetNodeId": "shared_trip"
+            }
+          ]
+        },
+        "home_trip": {
+          "id": "home_trip",
+          "characterId": "narrator",
+          "text": "Вы гребёте к станции. На середине реки телефон оживает: «Я всё ещё здесь». Вы отвечаете: «Я опоздал. Прости. Скоро буду». На этот раз это не способ закончить разговор — вы уже видите человека на платформе и машете ему свободной рукой.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 2000,
+          "nextNodeId": "home_end",
           "nextSceneId": "ending",
-          "nextNodeId": "game_over",
+          "nextSceneStartEffect": "FADE"
+        },
+        "shared_trip": {
+          "id": "shared_trip",
+          "characterId": "narrator",
+          "text": "Вы гребёте по очереди. На берегу старик долго не решается выйти, затем делает шаг на землю. «Теперь сам», — говорит он. Телефон показывает десяток пропущенных звонков. Вы набираете сестру и остаётесь на линии, пока идёте к станции.",
+          "nextNodeId": "shared_end",
+          "nextSceneId": "ending",
+          "nextSceneStartEffect": "FADE"
+        },
+        "beacon_trip": {
+          "id": "beacon_trip",
+          "characterId": "narrator",
+          "text": "Вы ставите колокол на причал и звоните трижды. Далеко в лесу отвечают шаги. Старик зажигает первый фонарь, вы — следующий. Сестре вы пишете правду: «Сегодня не приеду. Я объясню всё, когда смогу». Ответ приходит сразу: «Только не исчезай». Вы обещаете именно это.",
+          "nextNodeId": "beacon_end",
+          "nextSceneId": "ending",
           "nextSceneStartEffect": "FADE"
         }
       }
@@ -117,11 +523,56 @@
       "id": "ending",
       "backgroundResource": "files/scenes/ending.png",
       "nodes": {
-        "game_over": {
-          "id": "game_over",
-          "characterId": "system",
-          "text": "Конец.",
-          "camera": { "focusX": 0.5 },
+        "home_end": {
+          "id": "home_end",
+          "characterId": "narrator",
+          "text": "КОНЦОВКА «ОТВЕТИТЬ ВОВРЕМЯ»\n\nСестра встречает вас у станции. Вы рассказываете о лесе, не требуя, чтобы она поверила. Утром записка высыхает, и чужая надпись исчезает. Вы не знаете, ушёл ли старик. Но впервые не откладываете звонок человеку, которому можете ответить сейчас.",
+          "cameraStart": {
+            "focusX": 0.1
+          },
+          "camera": {
+            "focusX": 0.65
+          },
+          "cameraDurationMs": 3500,
+          "choices": []
+        },
+        "shared_end": {
+          "id": "shared_end",
+          "characterId": "narrator",
+          "text": "КОНЦОВКА «ДВА БИЛЕТА»\n\nУ кассы старик покупает билет и долго рассматривает дату. На прощание он кивает вам, как попутчику. Сестра сердится и обнимает одновременно. Спустя неделю приходит открытка: «Доехал. Поговорили». Подписи нет. Вам и не нужна подпись.",
+          "cameraStart": {
+            "focusX": 0.9
+          },
+          "camera": {
+            "focusX": 0.35
+          },
+          "cameraDurationMs": 3500,
+          "choices": []
+        },
+        "keeper_end": {
+          "id": "keeper_end",
+          "characterId": "narrator",
+          "text": "КОНЦОВКА «ДО УТРА»\n\nТретий удар проходит, пока вы слушаете. Впервые календарный лист переворачивается. Утром лодки у причала нет, но лес уже не кажется клеткой. Вы со стариком чините ступени и обсуждаете дорогу к станции. Возвращение отложено; теперь у него есть день, а у ожидания — конец.",
+          "cameraStart": {
+            "focusX": 0
+          },
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 3000,
+          "choices": []
+        },
+        "beacon_end": {
+          "id": "beacon_end",
+          "characterId": "narrator",
+          "text": "КОНЦОВКА «ОГНИ НА ВОДЕ»\n\nК причалу выходит первый путник. Вы не обещаете спасти его и не выбираете за него берег. Просто показываете лодку и слушаете. Старик наливает чай. На столе лежит телефон, который теперь всегда включён. Вы остались здесь по собственному решению — и знаете, что однажды сможете уйти.",
+          "cameraStart": {
+            "focusX": 1
+          },
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 3000,
           "choices": []
         }
       }

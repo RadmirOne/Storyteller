@@ -35,26 +35,24 @@ fun SceneBackground(state: SceneUiState) {
 
     var containerSize by remember { mutableStateOf(IntSize.Zero) }
 
-    val camera = remember(state.nodeId) {
-        Animatable(state.cameraTarget, CameraViewConverter)
+    val camera = remember(state.scene.id) {
+        Animatable(state.cameraStart ?: state.cameraTarget, CameraViewConverter)
     }
 
-    LaunchedEffect(state.nodeId) {
+    LaunchedEffect(state.scene.id, state.nodeId) {
         if (state.sceneChanged) {
             camera.snapTo(state.cameraStart ?: state.cameraTarget)
-        } else {
-            if (state.cameraStart != null) {
-                camera.snapTo(state.cameraStart)
-            }
-            camera.animateTo(state.cameraTarget, tween(state.cameraDurationMs.toInt()))
+        } else if (state.cameraStart != null) {
+            camera.snapTo(state.cameraStart)
         }
+        camera.animateTo(state.cameraTarget, tween(state.cameraDurationMs.toInt()))
     }
 
-    val fade = remember(state.nodeId) {
+    val fade = remember(state.scene.id, state.nodeId) {
         Animatable(if (state.enterEffect == SceneStartEffect.FADE) 0f else 1f)
     }
 
-    LaunchedEffect(state.nodeId) {
+    LaunchedEffect(state.scene.id, state.nodeId) {
         if (state.enterEffect == SceneStartEffect.FADE) {
             fade.animateTo(1f, tween(500))
         }

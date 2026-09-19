@@ -10,19 +10,22 @@ class StoryRepository {
     private var stories: List<StoryScript> = emptyList()
 
     fun setStories(jsonStrings: List<String>) {
-        stories = jsonStrings.map { Json.decodeFromString<StoryScript>(it) }
+        stories = jsonStrings.map { parseScript(it) }
     }
 
     fun getStories(): List<StoryScript> = stories
 
     fun loadScript(json: String): StoryScript {
-        val script = Json.decodeFromString<StoryScript>(json)
+        val script = parseScript(json)
         currentScript = script
         lastPlayedStoryId = script.id
         return script
     }
 
     fun getScript(): StoryScript? = currentScript
+
+    fun parseScript(json: String): StoryScript =
+        Json.decodeFromString<StoryScript>(json).also { validateStory(it) }
 
     fun getLastPlayedStoryId(): String? = lastPlayedStoryId
 

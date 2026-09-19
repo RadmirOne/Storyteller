@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,19 +51,23 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
     ) {
         SceneBackground(state = scene)
         scene.stage.forEach { stageCharacter ->
-            val sprite = script.characters.find { it.id == stageCharacter.characterId }
-            CharacterSprite(
-                stage = stageCharacter,
-                spriteResource = sprite?.spriteResource
+            key(stageCharacter.characterId) {
+                val sprite = script.characters.find { it.id == stageCharacter.characterId }
+                CharacterSprite(
+                    stage = stageCharacter,
+                    spriteResource = sprite?.spriteResource
+                )
+            }
+        }
+        key(scene.scene.id, current.id) {
+            DialogueOverlay(
+                speakerName = speakerName,
+                text = current.text,
+                choices = current.choices,
+                hasNext = current.nextNodeId != null,
+                onSelectChoice = { viewModel.selectChoice(it) },
+                onAdvance = { viewModel.advance() }
             )
         }
-        DialogueOverlay(
-            speakerName = speakerName,
-            text = current.text,
-            choices = current.choices,
-            hasNext = current.nextNodeId != null,
-            onSelectChoice = { viewModel.selectChoice(it) },
-            onAdvance = { viewModel.advance() }
-        )
     }
 }

@@ -1,31 +1,41 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Storyteller
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+Движок визуальных новелл для Android и iOS на Kotlin Multiplatform и Compose Multiplatform.
+Сценарии задаются в JSON: сцены, диалоги, развилки, персонажи, горизонтальная камера и появление фона.
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+## Структура
 
-### Running the apps
+- `shared/src/commonMain` — движок, модели, проверка сценариев и общий интерфейс.
+- `shared/src/commonMain/composeResources/files/story.json` — встроенная история.
+- `androidApp` — Android-приложение.
+- `iosApp` — SwiftUI-оболочка общего Compose-интерфейса.
+- `shared/src/commonTest` — тесты логики и моделей.
+- `shared/src/androidHostTest` — проверка встроенного сценария и изображений.
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+## Запуск и проверка
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+Нужны JDK и Android SDK, соответствующие настройкам Gradle проекта. Путь SDK задаётся локально в `local.properties`.
 
-### Running tests
+```powershell
+.\gradlew.bat :androidApp:assembleDebug
+.\gradlew.bat :shared:testAndroidHostTest
+```
 
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
+APK: `androidApp/build/outputs/apk/debug/androidApp-debug.apk`.
+Для iOS откройте `iosApp/iosApp.xcodeproj` в Xcode на macOS.
+Тесты iOS: `./gradlew :shared:iosSimulatorArm64Test` (macOS).
 
-- Android tests: `./gradlew :shared:testAndroidHostTest`
-- iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
+## Возможности и ограничения
 
----
+При старте проверяются версия формата, ссылки, параметры постановки и загрузка изображений.
+Ошибки показываются на экране историй с возможностью повторить загрузку.
+Кнопка «К историям» позволяет вернуться и начать прохождение заново.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+Состояние хранится в памяти. Сохранения, изменение игровых переменных, звук и редактор пока не реализованы.
+Условия выбора проверяются движком, но интерфейс пока показывает все варианты без пояснения недоступности.
+
+## Документация
+
+- [Формат сценария версии 1](docs/story-format.md)
+- [Архитектура](docs/context.md)
+- [Тестовая история и маршруты проверки](docs/test-story.md)

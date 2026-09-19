@@ -10,5 +10,6 @@ data class StoryScript(
     val characters: List<Character> = emptyList(),
     val startSceneId: String,
     val startNodeId: String,
-    val scenes: Map<String, Scene> = emptyMap()
+    val scenes: Map<String, Scene> = emptyMap(),
+    val schemaVersion: Int = 1
 )

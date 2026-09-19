@@ -36,8 +36,8 @@ class StoryViewModel : ViewModel() {
     private var currentCamera: CameraView = CameraView()
 
     fun loadStory(json: String) {
-        val script = repository.loadScript(json)
         val initialState = engine.initialize(json)
+        val script = repository.getScript() ?: return
         if (initialState != null) {
             currentStage = emptyList()
             currentCamera = CameraView()
@@ -64,36 +64,34 @@ class StoryViewModel : ViewModel() {
         val previousNode = engine.getCurrentNode()
         val choice = previousNode?.choices?.find { it.id == choiceId }
         val newState = engine.selectChoice(choiceId)
+        if (newState == null || newState == previousState) return
         _gameState.value = newState
         updateCurrentNode()
-        if (newState != null) {
-            val sceneChanged = previousState != null &&
-                previousState.currentSceneId != newState.currentSceneId
-            val effect = if (sceneChanged) {
-                choice?.targetSceneStartEffect ?: SceneStartEffect.NONE
-            } else {
-                SceneStartEffect.NONE
-            }
-            rebuildSceneState(previousState?.currentSceneId, effect)
+        val sceneChanged = previousState != null &&
+            previousState.currentSceneId != newState.currentSceneId
+        val effect = if (sceneChanged) {
+            choice?.targetSceneStartEffect ?: SceneStartEffect.NONE
+        } else {
+            SceneStartEffect.NONE
         }
+        rebuildSceneState(previousState?.currentSceneId, effect)
     }
 
     fun advance() {
         val previousState = engine.getGameState()
         val previousNode = engine.getCurrentNode()
         val newState = engine.advance()
+        if (newState == null || newState == previousState) return
         _gameState.value = newState
         updateCurrentNode()
-        if (newState != null) {
-            val sceneChanged = previousState != null &&
-                previousState.currentSceneId != newState.currentSceneId
-            val effect = if (sceneChanged) {
-                previousNode?.nextSceneStartEffect ?: SceneStartEffect.NONE
-            } else {
-                SceneStartEffect.NONE
-            }
-            rebuildSceneState(previousState?.currentSceneId, effect)
+        val sceneChanged = previousState != null &&
+            previousState.currentSceneId != newState.currentSceneId
+        val effect = if (sceneChanged) {
+            previousNode?.nextSceneStartEffect ?: SceneStartEffect.NONE
+        } else {
+            SceneStartEffect.NONE
         }
+        rebuildSceneState(previousState?.currentSceneId, effect)
     }
 
     private fun rebuildSceneState(previousSceneId: String?, enterEffect: SceneStartEffect) {
@@ -101,6 +99,10 @@ class StoryViewModel : ViewModel() {
         val state = engine.getGameState() ?: return
         val scene = script.scenes[state.currentSceneId] ?: return
         val node: DialogueNode = engine.getCurrentNode() ?: return
+        if (previousSceneId != state.currentSceneId) {
+            currentStage = emptyList()
+            currentCamera = CameraView()
+        }
         if (node.camera != null) {
             currentCamera = node.camera
         }

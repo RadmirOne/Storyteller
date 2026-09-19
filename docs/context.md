@@ -1,78 +1,39 @@
-# Project Context: Storyteller Engine
+# Архитектура Storyteller
 
-This document serves as the central context for the Storyteller project, outlining the architecture and logic implemented for the story script parsing system.
+Android и iOS используют общий интерфейс Compose Multiplatform и общую логику Kotlin.
 
-## Project Overview
-- **Technology Stack**: Kotlin Multiplatform (KMP), Compose Multiplatform.
-- **Core Goal**: Build a robust, data-driven story engine capable of parsing complex scripts with branching paths, conditions, and state persistence.
-- **Serialization**: Powered by `kotlinx-serialization` for JSON-based script loading.
+## Загрузка
 
-## Data Models (`shared/src/commonMain/kotlin/com/radmir/storyteller/models/`)
+`StoriesScreen` читает встроенный JSON и выполняет предварительную проверку в `Dispatchers.Default`:
 
-### 1. `StoryScript`
-The root object representing a full story.
-- `title`: Name of the story.
-- `startNodeId`: The ID of the node where the story begins.
-- `nodes`: A map of IDs to `DialogueNode` objects.
+1. `StoryRepository.parseScript` строго декодирует JSON через kotlinx.serialization.
+2. `validateStory` проверяет версию формата, начальный узел, ссылки, идентификаторы и числовые параметры.
+3. `validateStoryResources` проверяет уникальные пути изображений через `loadResourceImage`: файлы должны существовать и декодироваться. Результаты помещаются в кэш, защищённый Mutex.
+4. Только после успешной проверки вызывается `StoryViewModel.loadStory` в UI-контексте.
 
-### 2. `DialogueNode`
-A single point in the story.
-- `id`: Unique identifier.
-- `speaker`: The entity speaking.
-- `text`: The content of the dialogue.
-- `choices`: A list of possible player actions (branching).
-- `nextNodeId`: For linear progression (used when no choices are present).
+Ошибка оставляет пользователя на экране историй; индикатор снимается, доступна повторная попытка. Отмена корутины не преобразуется в ошибку сценария.
 
-### 3. `Choice`
-A branching option for the player.
-- `id`: Unique identifier for selection.
-- `text`: The text displayed to the player.
-- `targetNodeId`: The ID of the node this choice leads to.
-- `conditions`: Optional map of requirements (e.g., `{"affinity": 10}`) that must be met to see/select this choice.
+`StoryRepository.loadScript` повторно проверяет структуру, чтобы вызов движка вне UI тоже не принимал некорректный граф. Проверка ресурсов отделена от структуры: для новых источников историй вызывающая сторона должна предоставить загрузчик изображений. Неудачная загрузка не заменяет предыдущую историю.
 
-### 4. `GameState`
-Tracks the current progress and variables.
-- `currentNodeId`: The current active node.
-- `variables`: A map of integers (e.g., `affinity`, `health`) that can be modified by the story.
-- `visitedNodes`: A set of IDs for nodes already visited.
+## Выполнение и постановка
 
-## Core Components
+- `StoryScript` содержит персонажей и словарь сцен; `Scene` содержит фон и словарь узлов.
+- `StoryEngine` хранит `GameState`: текущую сцену, узел, переменные и посещённые узлы.
+- `selectChoice` проверяет условия и выполняет выбранный переход; `advance` выполняет линейный переход.
+- При переходе исходный узел добавляется в `visitedNodes` как `sceneId/nodeId`.
+- `StoryViewModel` публикует StateFlow и рассчитывает `SceneUiState`. Неизвестный выбор не очищает UI.
 
-### `StoryRepository`
-- Responsible for loading and holding the `StoryScript`.
-- Provides `loadScript(json: String)` to initialize the data.
+Внутри сцены камера и персонажи наследуются, если поля отсутствуют. При смене сцены сначала применяются значения по умолчанию: камера по центру, персонажей нет. Затем применяются поля нового узла.
 
-### `StoryEngine`
-The brain of the application. Manages the lifecycle of the story:
-- **Initialization**: Takes a JSON string, loads it via the repository, and sets the initial `GameState`.
-- **Navigation**:
-    - `getCurrentNode()`: Returns the `DialogueNode` based on the current `GameState`.
-    - `selectChoice(choiceId)`: Validates conditions, updates the `visitedNodes` set, and moves the `currentNodeId` to the target.
-    - `advance()`: Moves to the next linear node if `nextNodeId` is present.
+`SceneBackground` сохраняет Animatable камеры между узлами одной сцены, эффекты запускает по паре `(scene.id, nodeId)`. Камера анимируется от `cameraStart` к цели и при входе в новую сцену.
 
-### `StoryViewModel`
-The bridge between the engine and the UI.
-- Exposes `gameState` and `currentNode` as `StateFlow` for reactive UI updates.
-- Handles user actions (`selectChoice`, `advance`) and triggers state updates in the `StoryEngine`.
+Фон масштабируется по высоте и перемещается горизонтально с ограничением границ. Узкий фон центрируется. Спрайты размещаются относительно экрана и не двигаются вместе с камерой. `FADE` относится только к фону.
 
-## UI Layer
+## Проверки и ограничения
 
-### `StoryScreen`
-- A Compose Multiplatform component that displays the current dialogue.
-- Automatically updates UI elements (speaker, text, buttons) based on the `StoryViewModel` state.
-- Supports linear progression buttons and choice lists.
+Общие тесты покрывают переходы, валидацию, наследование и сброс постановки, ошибки ресурсов, сериализацию и геометрию камеры. Android host-тесты читают встроенный JSON, декодируют изображения, проверяют достижимость узлов и выполняют переходы от начала истории.
+Визуальное качество анимации и интерфейса проверяется на устройстве или эмуляторе; host-тесты не заменяют такую проверку.
 
-## Logic Flow
-1. **Load**: `Res.readBytes("story.json")` $\rightarrow$ `StoryRepository.loadScript()` $\rightarrow$ `StoryScript`
-2. **Init**: `StoryEngine.initialize()` $\rightarrow$ `GameState(startNodeId)`
-3. **Update**: Player selects `Choice` $\rightarrow$ `StoryViewModel.selectChoice()` $\rightarrow$ `StoryEngine.selectChoice()` $\rightarrow$ `GameState` updated.
-4. **Render**: UI observes `StoryViewModel` states and displays the data.
+Сохранения на диск, эффекты изменения переменных, скрытие недоступных вариантов, аудио и редактор пока отсутствуют. История загрузок существует только в памяти.
 
-## Current Status
-- [x] Project configuration (Dependencies & Plugins).
-- [x] Core Data Models.
-- [x] Repository and Engine logic.
-- [x] Sample JSON Story Script.
-- [x] ViewModel and Compose UI.
-- [ ] Advanced logic (variables, persistence).
-- [ ] Polished UI/Animations.
+Контракт: [story-format.md](story-format.md).
