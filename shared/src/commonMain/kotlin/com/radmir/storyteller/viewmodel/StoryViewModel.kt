@@ -28,6 +28,8 @@ class StoryViewModel(
     val currentNode = _currentNode.asStateFlow()
     private val _currentScript = MutableStateFlow<StoryScript?>(null)
     val currentScript = _currentScript.asStateFlow()
+    private val _playerCharacter = MutableStateFlow<PlayerCharacter?>(null)
+    val playerCharacter = _playerCharacter.asStateFlow()
     private val _sceneUiState = MutableStateFlow<SceneUiState?>(null)
     val sceneUiState = _sceneUiState.asStateFlow()
     private val _journal = MutableStateFlow<List<JournalEntry>>(emptyList())
@@ -48,6 +50,15 @@ class StoryViewModel(
         catch (e: Exception) { _saveError.value = "Не удалось прочитать сохранение. Можно начать новую игру." }
     }
 
+    fun loadStory(json: String, playerCharacter: PlayerCharacter) {
+        val fresh = StorySession(json, newPlayerCharacter = playerCharacter)
+        session = fresh
+        _playbackRevision.value++
+        publish(fresh)
+        saveProgress()
+    }
+
+    /** Kept for previews and tests that do not need an interactive player character. */
     fun loadStory(json: String) {
         val fresh = StorySession(json)
         session = fresh
@@ -132,6 +143,7 @@ class StoryViewModel(
         _gameState.value = current.state
         _currentNode.value = current.node
         _currentScript.value = current.story
+        _playerCharacter.value = current.playerCharacter
         _sceneUiState.value = current.scene
         _journal.value = current.journal
         if (current.story !in _history.value) _history.value += current.story
