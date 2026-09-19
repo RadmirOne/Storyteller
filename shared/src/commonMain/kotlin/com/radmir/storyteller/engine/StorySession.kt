@@ -6,10 +6,15 @@ import com.radmir.storyteller.viewmodel.DEFAULT_CAMERA_DURATION_MS
 import com.radmir.storyteller.viewmodel.SceneUiState
 
 /** Deterministic reading session: replay restores stage inheritance and the exact journal order. */
-internal class StorySession(json: String, progress: StoryProgress? = null) {
+internal class StorySession(
+    json: String,
+    progress: StoryProgress? = null,
+    newPlayerCharacter: PlayerCharacter? = null
+) {
     private val repository = StoryRepository()
     private val engine = StoryEngine(repository)
     val story: StoryScript
+    val playerCharacter: PlayerCharacter? = progress?.playerCharacter ?: newPlayerCharacter
     val state: GameState get() = engine.getGameState()!!
     val node: DialogueNode get() = engine.getCurrentNode()!!
     private val steps = mutableListOf<ProgressStep>()
@@ -35,13 +40,16 @@ internal class StorySession(json: String, progress: StoryProgress? = null) {
             if (!move(step.choiceId)) throw ProgressException("Сохранение повреждено: не удалось восстановить маршрут.")
         }
         if (progress != null) {
-            // Resume at the final camera position, without replaying the entrance or pan.
             scene = scene.copy(cameraStart = scene.cameraTarget, cameraDurationMs = 0,
                 enterEffect = SceneStartEffect.NONE, sceneChanged = true)
         }
     }
 
-    fun progress(): StoryProgress = StoryProgress(story, steps.toList())
+    fun progress(): StoryProgress = StoryProgress(
+        story = story,
+        steps = steps.toList(),
+        playerCharacter = playerCharacter
+    )
 
     fun previousSceneStepCount(): Int? = sceneTrail.indexOfLast { it != state.currentSceneId }
         .takeIf { it >= 0 }
