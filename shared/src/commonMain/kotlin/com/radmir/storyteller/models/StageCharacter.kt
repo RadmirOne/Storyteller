@@ -10,5 +10,7 @@ data class StageCharacter(
     val characterId: String,
     val position: StagePosition = StagePosition.CENTER,
     val scale: Float = 1f,
-    val visible: Boolean = true
+    val visible: Boolean = true,
+    val worldX: Float? = null,
+    val groundY: Float = 0.92f
 )

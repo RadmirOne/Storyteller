@@ -3,6 +3,8 @@ package com.radmir.storyteller
 import com.radmir.storyteller.engine.StoryEngine
 import com.radmir.storyteller.repository.StoryRepository
 import com.radmir.storyteller.repository.validateStoryResources
+import com.radmir.storyteller.repository.MemoryProgressStore
+import com.radmir.storyteller.viewmodel.StoryViewModel
 import java.io.File
 import javax.imageio.ImageIO
 import kotlinx.coroutines.runBlocking
@@ -12,6 +14,55 @@ class BundledStoryTest {
     private val resources = listOf(
         File("src/commonMain/composeResources"), File("shared/src/commonMain/composeResources")
     ).first { it.isDirectory }
+
+    @Test fun everyReachablePageCanResumeItsStageAndJournal() {
+        val json = File(resources, "files/story.json").readText()
+        val pending = ArrayDeque<List<String?>>()
+        pending.add(emptyList())
+        val visited = mutableSetOf<Pair<String, String>>()
+        while (pending.isNotEmpty()) {
+            val route = pending.removeFirst()
+            val store = MemoryProgressStore()
+            val original = StoryViewModel(store).apply { loadStory(json) }
+            route.forEach { if (it == null) original.advance() else original.selectChoice(it) }
+            val state = original.gameState.value!!
+            if (!visited.add(state.currentSceneId to state.currentNodeId)) continue
+            val restored = StoryViewModel(store).apply { continueStory(json) }
+            assertEquals(state, restored.gameState.value)
+            assertEquals(original.sceneUiState.value!!.stage, restored.sceneUiState.value!!.stage)
+            assertEquals(original.sceneUiState.value!!.cameraTarget, restored.sceneUiState.value!!.cameraTarget)
+            assertEquals(original.journal.value, restored.journal.value)
+            val node = original.currentNode.value!!
+            if (node.nextNodeId != null) pending.add(route + listOf(null))
+            node.choices.orEmpty().forEach { pending.add(route + it.id) }
+        }
+        val script = StoryRepository().parseScript(json)
+        assertEquals(script.scenes.values.sumOf { it.nodes.size }, visited.size)
+    }
+
+    @Test fun storyPagesAreShortAndCharactersHaveRealTransparency() {
+        val script = StoryRepository().parseScript(File(resources, "files/story.json").readText())
+        script.scenes.forEach { (sceneId, scene) ->
+            scene.nodes.forEach { (nodeId, node) ->
+                assertTrue(node.text.length <= 300, "$sceneId/$nodeId: ${node.text.length} символов, максимум 300")
+            }
+        }
+        script.characters.mapNotNull { it.spriteResource }.forEach { path ->
+            val image = ImageIO.read(File(resources, path))
+            assertTrue(image.colorModel.hasAlpha(), "$path должен иметь alpha-канал")
+            var transparent = 0
+            var opaque = 0
+            var total = 0
+            for (y in 0 until image.height step 32) for (x in 0 until image.width step 32) {
+                val alpha = (image.getRGB(x, y) ushr 24) and 255
+                if (alpha == 0) transparent++
+                // Generated edges and painted interiors can have near-opaque alpha (e.g. 252/255).
+                if (alpha >= 240) opaque++
+                total++
+            }
+            assertTrue(transparent > total / 10 && opaque > total / 10, "$path: нужны прозрачный фон и видимый персонаж")
+        }
+    }
 
     @Test fun bundledStoryHasDecodableImagesAndAllNodesAreReachable() = runBlocking {
         val script = StoryRepository().parseScript(File(resources, "files/story.json").readText())

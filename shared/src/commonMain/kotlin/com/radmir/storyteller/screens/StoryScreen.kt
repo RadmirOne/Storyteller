@@ -2,7 +2,9 @@ package com.radmir.storyteller.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -18,7 +20,7 @@ import com.radmir.storyteller.screens.scene.SceneBackground
 import com.radmir.storyteller.viewmodel.StoryViewModel
 
 @Composable
-fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
+fun StoryScreen(viewModel: StoryViewModel = viewModel(), onReturnToMenu: () -> Unit) {
     val gameState by viewModel.gameState.collectAsState()
     val currentNode by viewModel.currentNode.collectAsState()
     val currentScript by viewModel.currentScript.collectAsState()
@@ -44,30 +46,36 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
     val character = script.characters.find { it.id == current.characterId }
     val speakerName = character?.name ?: "Неизвестный"
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        SceneBackground(state = scene)
-        scene.stage.forEach { stageCharacter ->
-            key(stageCharacter.characterId) {
-                val sprite = script.characters.find { it.id == stageCharacter.characterId }
-                CharacterSprite(
-                    stage = stageCharacter,
-                    spriteResource = sprite?.spriteResource
-                )
+        // Stable viewport: dialogue length must not resize the camera and actors.
+        Box(modifier = Modifier.weight(0.62f).fillMaxWidth()) {
+            SceneBackground(state = scene, characters = script.characters)
+            scene.stage.filter { it.worldX == null }.forEach { stageCharacter ->
+                key(stageCharacter.characterId) {
+                    val sprite = script.characters.find { it.id == stageCharacter.characterId }
+                    CharacterSprite(
+                        stage = stageCharacter,
+                        spriteResource = sprite?.spriteResource
+                    )
+                }
             }
         }
-        key(scene.scene.id, current.id) {
-            DialogueOverlay(
-                speakerName = speakerName,
-                text = current.text,
-                choices = current.choices,
-                hasNext = current.nextNodeId != null,
-                onSelectChoice = { viewModel.selectChoice(it) },
-                onAdvance = { viewModel.advance() }
-            )
+        Box(modifier = Modifier.weight(0.38f).fillMaxWidth()) {
+            key(scene.scene.id, current.id) {
+                DialogueOverlay(
+                    speakerName = speakerName,
+                    text = current.text,
+                    choices = current.choices,
+                    hasNext = current.nextNodeId != null,
+                    onSelectChoice = { viewModel.selectChoice(it) },
+                    onAdvance = { viewModel.advance() },
+                    onReturnToMenu = onReturnToMenu
+                )
+            }
         }
     }
 }

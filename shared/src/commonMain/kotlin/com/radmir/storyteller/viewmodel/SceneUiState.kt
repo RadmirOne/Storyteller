@@ -15,5 +15,6 @@ data class SceneUiState(
     val cameraDurationMs: Long = DEFAULT_CAMERA_DURATION_MS,
     val stage: List<StageCharacter> = emptyList(),
     val enterEffect: SceneStartEffect = SceneStartEffect.NONE,
-    val sceneChanged: Boolean = false
+    val sceneChanged: Boolean = false,
+    val cameraCueId: String = nodeId
 )

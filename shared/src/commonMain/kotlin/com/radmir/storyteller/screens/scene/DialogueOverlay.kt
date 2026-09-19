@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.padding
@@ -29,51 +29,58 @@ fun BoxScope.DialogueOverlay(
     choices: List<Choice>?,
     hasNext: Boolean,
     onSelectChoice: (String) -> Unit,
-    onAdvance: () -> Unit
+    onAdvance: () -> Unit,
+    onReturnToMenu: () -> Unit
 ) {
     Surface(
-        color = Color.Black.copy(alpha = 0.6f),
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier
             .align(Alignment.BottomCenter)
-            .fillMaxWidth()
+            .fillMaxSize()
     ) {
         Column(
-            modifier = Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState()).padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = speakerName,
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                color = Color.White
-            )
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            if (!choices.isNullOrEmpty()) {
-                choices.forEach { choice ->
-                    Button(
-                        onClick = { onSelectChoice(choice.id) },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(choice.text)
+            Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = speakerName,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color(0xFFF0EDE7)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                if (!choices.isNullOrEmpty()) {
+                    choices.forEach { choice ->
+                        Button(
+                            onClick = { onSelectChoice(choice.id) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(choice.text)
+                        }
                     }
                 }
-            } else if (hasNext) {
+            }
+            if (choices.isNullOrEmpty() && hasNext) {
                 Button(
                     onClick = onAdvance,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Далее")
                 }
-            } else {
+            } else if (choices.isNullOrEmpty()) {
                 Text(
                     text = "Конец истории",
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White.copy(alpha = 0.7f)
                 )
+                Button(onClick = onReturnToMenu, modifier = Modifier.fillMaxWidth()) {
+                    Text("Вернуться в меню")
+                }
             }
         }
     }

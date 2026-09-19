@@ -1,578 +1,884 @@
 {
-  "schemaVersion": 1,
-  "id": "forest_mystery",
-  "title": "До третьего удара",
-  "description": "Ночная переправа, невыполненные обещания и четыре способа закончить дорогу. Демонстрационная история движка.",
+  "schemaVersion": 2,
+  "id": "lighthouse_last_light",
+  "title": "Пока горит маяк",
+  "description": "Возвращение на остров, аварийная ночь и разговор, который больше нельзя откладывать. История о семье и ответственности с четырьмя концовками.",
   "characters": [
     {
       "id": "narrator",
       "name": "Рассказчик"
     },
     {
-      "id": "old_man",
-      "name": "Перевозчик",
-      "spriteResource": "files/characters/old_man.png"
+      "id": "protagonist",
+      "name": "Вы"
+    },
+    {
+      "id": "mira",
+      "name": "Мира",
+      "spriteResource": "files/characters/mira.png"
+    },
+    {
+      "id": "lev",
+      "name": "Лев",
+      "spriteResource": "files/characters/lev.png"
     }
   ],
-  "startSceneId": "forest",
+  "startSceneId": "arrival",
   "startNodeId": "start",
   "scenes": {
-    "forest": {
-      "id": "forest",
-      "backgroundResource": "files/scenes/forest.png",
+    "arrival": {
+      "id": "arrival",
+      "backgroundResource": "files/scenes/island_arrival.png",
       "nodes": {
         "start": {
           "id": "start",
           "characterId": "narrator",
-          "text": "На последней электричке вы ехали к сестре. В кармане осталась её записка: «Если опоздаешь, не ищи короткой дороги через лес. Я подожду». Теперь под ногами хвоя, рельсов не видно, а часы показывают без трёх минут полночь. Секундная стрелка дрожит на месте.",
+          "text": "Паром отходит от острова. Три года назад мать махала вам с причала до самого поворота. Сегодня у ограды никого.",
           "cameraStart": {
-            "focusX": 0
-          },
-          "camera": {
-            "focusX": 1
-          },
-          "cameraDurationMs": 5000,
-          "nextNodeId": "bell"
-        },
-        "bell": {
-          "id": "bell",
-          "characterId": "narrator",
-          "text": "Из темноты доносится звон. Один удар, пауза, второй. Между деревьями тянется мокрая верёвка, но колокола на ней нет. Вы пробуете позвать сестру. Лес возвращает голос так быстро, будто кто-то стоит совсем рядом и повторяет каждое слово.",
-          "camera": {
-            "focusX": 0.25
-          },
-          "cameraDurationMs": 2200,
-          "nextNodeId": "note"
-        },
-        "note": {
-          "id": "note",
-          "characterId": "narrator",
-          "text": "На обороте записки проступают чужие слова: «До третьего удара реши, что понесёшь через воду». Чернила ещё влажные. Справа мелькает тёплый свет, слева шумит река. Вдалеке скрипят половицы — или ветви. Вы можете выбрать дорогу, но стоять здесь до утра почему-то кажется худшим решением.",
-          "choices": [
-            {
-              "id": "water",
-              "text": "Сначала осмотреть берег",
-              "targetNodeId": "bank",
-              "targetSceneId": "river",
-              "targetSceneStartEffect": "FADE"
-            },
-            {
-              "id": "light",
-              "text": "Пойти к свету хижины",
-              "targetNodeId": "door",
-              "targetSceneId": "cabin",
-              "targetSceneStartEffect": "FADE"
-            }
-          ]
-        }
-      }
-    },
-    "river": {
-      "id": "river",
-      "backgroundResource": "files/scenes/river.png",
-      "nodes": {
-        "bank": {
-          "id": "bank",
-          "characterId": "narrator",
-          "text": "Река уже, чем представлялось по шуму. На противоположном берегу горит один неподвижный огонёк. Между берегами натянут трос, к нему привязана пустая лодка. Она стоит у дальнего причала, хотя течение должно было давно унести её вниз. Рядом на столбе вырезано: «Перевозчик отвечает только на свой звон».",
-          "cameraStart": {
-            "focusX": 0.05
-          },
-          "camera": {
-            "focusX": 0.95
-          },
-          "cameraDurationMs": 4200,
-          "nextNodeId": "inspect"
-        },
-        "inspect": {
-          "id": "inspect",
-          "characterId": "narrator",
-          "text": "Под тросом висит медное кольцо. На мокрой доске лежит варежка — такая же, какую сестра потеряла много лет назад. Вы помните тот день: она ждала у школы, а вы забыли прийти. Можно позвать перевозчика сейчас или сперва понять, почему река показывает именно это.",
-          "choices": [
-            {
-              "id": "ring",
-              "text": "Потянуть за медное кольцо",
-              "targetNodeId": "answer"
-            },
-            {
-              "id": "read",
-              "text": "Прочитать надписи на причале",
-              "targetNodeId": "marks"
-            }
-          ]
-        },
-        "answer": {
-          "id": "answer",
-          "characterId": "narrator",
-          "text": "Кольцо холодит ладонь. Вместо звона из-за воды слышится ваш собственный голос: «Ещё минуту. Я скоро». Это фраза, которой вы когда-то отвечали на каждый звонок сестры. Лодка делает короткое движение к вам и останавливается. За спиной загорается окно хижины.",
-          "cameraStart": {
-            "focusX": 0.95
-          },
-          "camera": {
             "focusX": 0.1
           },
-          "cameraDurationMs": 1800,
-          "nextNodeId": "marks"
-        },
-        "marks": {
-          "id": "marks",
-          "characterId": "narrator",
-          "text": "На перилах десятки имён. Рядом с каждым — не дата, а короткое обещание: «Вернусь к ужину», «Напишу первым», «Не оставлю одного». Последняя строка пустая. Вы отдёргиваете руку: в древесине медленно появляются первые буквы вашего имени.",
           "camera": {
-            "focusX": 0.5
+            "focusX": 0.8
           },
-          "cameraDurationMs": 0,
-          "nextNodeId": "to_cabin"
+          "cameraDurationMs": 3500,
+          "stageCharacters": [],
+          "nextNodeId": "start_2"
         },
-        "to_cabin": {
-          "id": "to_cabin",
+        "start_2": {
+          "id": "start_2",
           "characterId": "narrator",
-          "text": "Вы не дописываете обещание. За ответами придётся идти к огню. Тропинка от причала заканчивается ступенями хижины; на них нет ни одного следа, кроме ваших. Изнутри кто-то отодвигает второй стул — ровно в тот момент, когда вы поднимаете руку, чтобы постучать.",
-          "nextNodeId": "door",
-          "nextSceneId": "cabin",
-          "nextSceneStartEffect": "FADE"
-        }
-      }
-    },
-    "cabin": {
-      "id": "cabin",
-      "backgroundResource": "files/scenes/cabin.png",
-      "nodes": {
-        "door": {
-          "id": "door",
-          "characterId": "old_man",
-          "text": "Дверь открыта. Старик у порога держит фонарь с погасшим фитилём. «Заходи. До третьего удара ещё есть время». Он не спрашивает имени и не смотрит на записку, которую вы всё ещё сжимаете в кулаке.",
+          "text": "Под курткой — документы на её дом. Вы приехали оформить продажу и купили обратный билет на завтра. Казалось, одного дня хватит.",
+          "nextNodeId": "mira"
+        },
+        "mira": {
+          "id": "mira",
+          "characterId": "mira",
+          "text": "«Чемодан давай. Колёса здесь только для красоты». Мира берётся за ручку прежде, чем вы успеваете поздороваться. Медная коса выбилась из-под капюшона.",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
           "stageCharacters": [
             {
-              "characterId": "old_man",
+              "characterId": "mira",
               "position": "LEFT",
-              "scale": 0.85,
-              "visible": true
-            }
-          ],
-          "cameraStart": {
-            "focusX": 0
-          },
-          "camera": {
-            "focusX": 0.65
-          },
-          "cameraDurationMs": 3200,
-          "nextNodeId": "tea"
-        },
-        "tea": {
-          "id": "tea",
-          "characterId": "old_man",
-          "text": "«Чай настоящий, стул тоже. Здесь не всё обман». Старик ставит перед вами чашку. На столе лежат ключ, маленький колокол и книга без обложки. В раскрытой книге вы замечаете собственное имя, но старик мягко прикрывает страницу ладонью.",
-          "nextNodeId": "question"
-        },
-        "question": {
-          "id": "question",
-          "characterId": "old_man",
-          "text": "«Это не суд, — говорит он. — Река никого не наказывает. Она удерживает незаконченные дороги. Иногда дорогу можно закончить, просто сказав правду». Вы вспоминаете сообщение сестры, на которое не ответили перед поездкой. В нём было всего два слова: «Ты приедешь?»",
-          "stageCharacters": [
-            {
-              "characterId": "old_man",
-              "position": "CENTER",
+              "worldX": 0.32,
+              "groundY": 0.9,
               "scale": 1,
               "visible": true
             }
           ],
+          "nextNodeId": "mira_2"
+        },
+        "mira_2": {
+          "id": "mira_2",
+          "characterId": "mira",
+          "text": "«До дождя бы успеть». Она смотрит на небо. Вы приготовили слова для встречи, но теперь все они кажутся не к месту.",
+          "nextNodeId": "greeting"
+        },
+        "greeting": {
+          "id": "greeting",
+          "characterId": "protagonist",
+          "text": "По дороге вы спрашиваете о мастерской, паромах, соседях. Мира отвечает коротко. Ни один вопрос не касается того, ради чего вы приехали.",
+          "nextNodeId": "greeting_2"
+        },
+        "greeting_2": {
+          "id": "greeting_2",
+          "characterId": "protagonist",
+          "text": "В кухонном окне горит свет. На секунду кажется, что мать дома и встреча ещё впереди.",
+          "nextNodeId": "house"
+        },
+        "house": {
+          "id": "house",
+          "characterId": "mira",
+          "text": "«Лампа на таймере», — говорит Мира. Потом замечает папку. «Оценщик был во вторник. Ты мог хотя бы написать, что его присылаешь».",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
           "choices": [
             {
-              "id": "ask_keeper",
-              "text": "Спросить, почему старик остался",
-              "targetNodeId": "keeper"
+              "id": "listen",
+              "text": "Спросить, что она хотела сделать с домом",
+              "targetNodeId": "listen"
             },
             {
-              "id": "ask_rules",
-              "text": "Спросить, как попасть домой",
-              "targetNodeId": "rules"
+              "id": "explain",
+              "text": "Объяснить, почему продажа казалась разумной",
+              "targetNodeId": "explain"
             }
           ]
         },
-        "keeper": {
-          "id": "keeper",
-          "characterId": "old_man",
-          "text": "«Я обещал проводить одного человека до станции. Решил, что он и сам найдёт дорогу». Старик вращает чашку, не отпивая. «Потом долго уверял себя, что виноват туман. Здесь удобно ждать: никто не требует признать, что ты уже мог уйти». Он впервые поднимает на вас глаза.",
-          "nextNodeId": "keeper_reply"
-        },
-        "keeper_reply": {
-          "id": "keeper_reply",
-          "characterId": "narrator",
-          "text": "Вы спрашиваете, можно ли уйти вдвоём. Старик долго молчит. За окном вода отражает свет, которого нет в комнате. «Ключ открывает лодку. Колокол зовёт её. Но если я отпущу верёвку, кто встретит следующего путника?» Вопрос звучит как привычная отговорка, в которую он сам устал верить.",
-          "stageCharacters": [
-            {
-              "characterId": "old_man",
-              "position": "RIGHT",
-              "scale": 0.9,
-              "visible": true
-            }
-          ],
+        "listen": {
+          "id": "listen",
+          "characterId": "mira",
+          "text": "«Я не знаю, что делать с домом. Но полгода я одна разбирала лекарства, звонила в больницу, отменяла доставки. Хотелось хоть это решить вдвоём. Чтобы мне не принесли ещё одну готовую бумагу».",
           "camera": {
-            "focusX": 0.9
+            "targetCharacterId": "mira"
           },
-          "cameraDurationMs": 1800,
-          "nextNodeId": "rules"
+          "cameraDurationMs": 1100,
+          "nextNodeId": "honesty"
         },
-        "rules": {
-          "id": "rules",
-          "characterId": "old_man",
-          "text": "«Возьми ключ — сможешь переправиться один. Возьми колокол — сможешь позвать того, кто останется. Или дождись утра здесь». Старик указывает на стену: на ней висит календарь, в котором на каждом листе одна и та же дата. «Только не называй ожидание выбором, если это страх».",
+        "explain": {
+          "id": "explain",
+          "characterId": "protagonist",
+          "text": "Вы говорите о расходах и ремонте. Деньги помогут Мире открыть мастерскую. Она поднимает голову, и вы замолкаете. «Я думал о расходах, — говорите вы. — Но не спросил, чего хочешь ты».",
+          "nextNodeId": "honesty"
+        },
+        "honesty": {
+          "id": "honesty",
+          "characterId": "mira",
+          "text": "«Деньги ты присылал. Я помню. Мне было нужно другое: чтобы иногда не я звонила первой». Мира отворачивается. По причалу к вам идёт Лев, смотритель маяка. Он заметно припадает на правую ногу.",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "lev"
+        },
+        "lev": {
+          "id": "lev",
+          "characterId": "lev",
+          "text": "«Простите, что влезаю». Лев откидывает капюшон. «Мира, запасной блок готов? На маяке питание скачет, а рабочее судно ещё в проливе». Он поднимает рацию. «Шторм пришёл раньше. Они не успели пройти до закрытия фарватера».",
+          "camera": {
+            "targetCharacterId": "lev"
+          },
+          "cameraDurationMs": 1100,
           "stageCharacters": [
             {
-              "characterId": "old_man",
+              "characterId": "mira",
+              "position": "LEFT",
+              "worldX": 0.32,
+              "groundY": 0.9,
+              "scale": 1,
+              "visible": true
+            },
+            {
+              "characterId": "lev",
               "position": "RIGHT",
-              "scale": 0.9,
+              "worldX": 0.68,
+              "groundY": 0.9,
+              "scale": 1,
               "visible": true
             }
           ],
-          "nextNodeId": "lamp"
+          "nextNodeId": "work"
         },
-        "lamp": {
-          "id": "lamp",
+        "work": {
+          "id": "work",
+          "characterId": "mira",
+          "text": "«Готов. Но это временно, до замены линии». Мира забирает у Льва ящик, потом поворачивается к вам. «Поможешь донести? Дом никуда не уйдёт». Впервые за вечер она просит о чём-то, что вы можете сделать прямо сейчас.",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "threshold",
+          "nextSceneId": "tower",
+          "nextSceneStartEffect": "FADE"
+        }
+      }
+    },
+    "tower": {
+      "id": "tower",
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "nodes": {
+        "threshold": {
+          "id": "threshold",
           "characterId": "narrator",
-          "text": "Фонарь у двери вспыхивает. Старик отходит за перегородку искать масло, и на мгновение кажется, что разговора вовсе не было. Чашек на столе по-прежнему две. Из соседней комнаты слышно: «Если решишь уходить, не обещай вернуться из вежливости».",
+          "text": "В маяке пахнет мокрой одеждой и горячим металлом. На стене — карта пролива, рядом фотография матери. Мира ставит ящик на стол. За стеной гудит оборудование. Через круглое окно проходит отблеск луча. Всё здесь меньше, чем вы помнили.",
           "stageCharacters": [
             {
-              "characterId": "old_man",
+              "characterId": "mira",
+              "position": "LEFT",
+              "worldX": 0.32,
+              "groundY": 0.9,
+              "scale": 1,
+              "visible": true
+            },
+            {
+              "characterId": "lev",
               "position": "RIGHT",
-              "scale": 0.9,
-              "visible": false
+              "worldX": 0.68,
+              "groundY": 0.9,
+              "scale": 1,
+              "visible": true
             }
           ],
           "cameraStart": {
-            "focusX": 0.9
+            "focusX": 0.08
           },
           "camera": {
-            "focusX": 0.15
+            "focusX": 0.82
           },
-          "cameraDurationMs": 2600,
-          "nextNodeId": "empty"
+          "cameraDurationMs": 3000,
+          "nextNodeId": "charts"
         },
-        "empty": {
-          "id": "empty",
-          "characterId": "narrator",
-          "text": "Вы подходите к окну. В стекле отражается пустая комната, хотя за перегородкой ещё скрипит пол. Теперь видно главное: трос у реки продолжается до хижины. Всё это время старик удерживал лодку рукой. Рядом с его стулом в полу вытерта глубокая борозда.",
-          "stageCharacters": [],
-          "nextNodeId": "return"
+        "charts": {
+          "id": "charts",
+          "characterId": "lev",
+          "text": "«Судно “Вега”. Четверо на борту. Береговая служба их ведёт». Лев показывает маршрут. «Наш огонь — дополнительный ориентир. В такую погоду важный».",
+          "camera": {
+            "targetCharacterId": "lev"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "charts_2"
         },
-        "return": {
-          "id": "return",
+        "charts_2": {
+          "id": "charts_2",
+          "characterId": "lev",
+          "text": "«Я летом писал про питание. Ремонт назначили на следующую навигацию». Он разглаживает край карты и отодвигает рацию ближе.",
+          "nextNodeId": "mira_work"
+        },
+        "mira_work": {
+          "id": "mira_work",
+          "characterId": "mira",
+          "text": "«Проверим резерв и передадим состояние берегу». Мира замечает ваш взгляд на фотографию. «Мама приносила сюда ужин. Но не каждый день, как Лев рассказывает».",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "mira_work_2"
+        },
+        "mira_work_2": {
+          "id": "mira_work_2",
+          "characterId": "mira",
+          "text": "«Иногда он сам приходил и съедал всё». Лев возмущённо кашляет. На секунду разговор становится почти домашним.",
+          "nextNodeId": "book"
+        },
+        "book": {
+          "id": "book",
           "characterId": "narrator",
-          "text": "Старик возвращается без масла. «Закончилось», — говорит он и садится. Вы понимаете: он боится не темноты. Он боится снова оказаться человеком, который может ошибиться. Вы кладёте записку сестры на стол, чтобы не прятаться за красивыми словами.",
-          "stageCharacters": [
-            {
-              "characterId": "old_man",
-              "position": "CENTER",
-              "scale": 1.05,
-              "visible": true
-            }
-          ],
+          "text": "Под фотографией лежит материнская тетрадь. Между записями о доставках — семена, краска, новый чайник. Планы на месяцы, которых у неё не было.",
           "camera": {
             "focusX": 0.5
           },
           "cameraDurationMs": 1200,
-          "nextNodeId": "decision"
+          "nextNodeId": "book_2"
         },
-        "decision": {
-          "id": "decision",
+        "book_2": {
+          "id": "book_2",
           "characterId": "narrator",
-          "text": "Второй удар колокола звучит прямо под полом. Старик протягивает вам раскрытую ладонь: на ней лежит ключ. Колокол остаётся на столе. За окном начинается дождь, но огонёк на другом берегу не гаснет.",
+          "text": "Мира достаёт запасной блок. «Освободишь стол?» Вы задерживаете руку на знакомой обложке.",
           "choices": [
             {
-              "id": "key",
-              "text": "Взять ключ и возвращаться к сестре",
-              "targetNodeId": "alone",
-              "targetSceneId": "crossing",
-              "targetSceneStartEffect": "FADE"
+              "id": "read",
+              "text": "Спросить о тетради, прежде чем убрать её",
+              "targetNodeId": "journal"
             },
             {
-              "id": "together",
-              "text": "Взять колокол: «Пойдёмте со мной»",
-              "targetNodeId": "invitation"
-            },
-            {
-              "id": "stay",
-              "text": "Остаться и выслушать старика до утра",
-              "targetNodeId": "stay"
+              "id": "help",
+              "text": "Освободить стол и предложить помощь",
+              "targetNodeId": "help"
             }
           ]
         },
-        "invitation": {
-          "id": "invitation",
+        "journal": {
+          "id": "journal",
+          "characterId": "lev",
+          "text": "«Она меня порядку учила. Я всё на обрывках записывал», — говорит Лев. «Забери потом, если хочешь».",
+          "camera": {
+            "targetCharacterId": "lev"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "journal_2"
+        },
+        "journal_2": {
+          "id": "journal_2",
+          "characterId": "lev",
+          "text": "Вы находите номер своей работы. Мать переписала его на случай, если личный телефон опять не ответит.",
+          "nextNodeId": "help"
+        },
+        "help": {
+          "id": "help",
+          "characterId": "protagonist",
+          "text": "Вы убираете тетрадь и предлагаете помощь. Мира просит записывать сообщения с берега: время, состояние судна, указания.",
+          "nextNodeId": "help_2"
+        },
+        "help_2": {
+          "id": "help_2",
+          "characterId": "protagonist",
+          "text": "Сначала работа кажется слишком простой. Потом рация оживает, Лев отвечает, Мира задаёт вопрос — и вы торопитесь записать всё точно.",
+          "nextNodeId": "message"
+        },
+        "message": {
+          "id": "message",
+          "characterId": "lev",
+          "text": "«“Вега” разворачивается к защищённой стоянке. Нам велели сразу сообщить, если погаснем». Лев диктует медленнее, чтобы вы успели записать.",
+          "camera": {
+            "targetCharacterId": "lev"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "message_2"
+        },
+        "message_2": {
+          "id": "message_2",
+          "characterId": "lev",
+          "text": "«Спуск к воде закрыт. Запомните оба». Он пытается встать, морщится и садится. Мира молча пододвигает к нему карту.",
+          "nextNodeId": "outage",
+          "nextSceneId": "tower_dark",
+          "nextSceneStartEffect": "NONE"
+        }
+      }
+    },
+    "tower_dark": {
+      "id": "tower_dark",
+      "backgroundResource": "files/scenes/lighthouse_room_dark.png",
+      "nodes": {
+        "outage": {
+          "id": "outage",
           "characterId": "narrator",
-          "text": "«Я не могу обещать, что там вас ждут, — говорите вы. — И не знаю, простят ли. Но вы можете спросить сами». Старик смотрит на колокол так, будто видит его впервые. Потом встаёт. Вы не забираете у него верёвку: ждёте, пока он сам разожмёт пальцы.",
+          "text": "Гул обрывается. За окном больше нет луча. Комнату освещает только аварийная лампа. Мира проверяет прибор и качает головой. Лев нажимает кнопку рации: «Маяк погас. Основной огонь отсутствует».",
+          "camera": {
+            "targetCharacterId": "lev"
+          },
+          "cameraDurationMs": 0,
           "stageCharacters": [
             {
-              "characterId": "old_man",
+              "characterId": "mira",
               "position": "LEFT",
-              "scale": 0.95,
+              "worldX": 0.32,
+              "groundY": 0.9,
+              "scale": 1,
               "visible": true
-            }
-          ],
-          "nextNodeId": "release"
-        },
-        "release": {
-          "id": "release",
-          "characterId": "narrator",
-          "text": "Верёвка тихо падает на пол. Ничего не рушится. Старик удивлённо смеётся, затем смущается собственного смеха. «Я думал, будет громче». Он берёт погасший фонарь. На пороге вы оба оглядываетесь; две чашки на столе уже пусты.",
-          "nextNodeId": "together",
-          "nextSceneId": "crossing",
-          "nextSceneStartEffect": "FADE"
-        },
-        "stay": {
-          "id": "stay",
-          "characterId": "narrator",
-          "text": "Вы садитесь напротив. «Расскажите, кого вы не проводили». Старик называет имя, затем вспоминает смешную шапку, спор о погоде и купленный на станции пирог. История перестаёт быть оправданием и становится воспоминанием. Вы слушаете, хотя третий удар уже близко.",
-          "stageCharacters": [
+            },
             {
-              "characterId": "old_man",
-              "position": "LEFT",
+              "characterId": "lev",
+              "position": "RIGHT",
+              "worldX": 0.68,
+              "groundY": 0.9,
               "scale": 1,
               "visible": true
             }
           ],
-          "nextNodeId": "stay_choice"
+          "cameraStart": {
+            "targetCharacterId": "lev"
+          },
+          "nextNodeId": "options"
         },
-        "stay_choice": {
-          "id": "stay_choice",
-          "characterId": "narrator",
-          "text": "На календаре шевелится уголок листа. Вы можете остаться на эту ночь осознанно — или уйти сейчас, пока лодка доступна. Старик больше не пытается задержать вас. «Спасибо, что дослушал», — говорит он. Снаружи дождь понемногу стихает.",
+        "options": {
+          "id": "options",
+          "characterId": "mira",
+          "text": "«Можно проверить резерв наверху. Либо отнести переносной огонь на верхний береговой пост — если служба подтвердит, что путь открыт». Мира закрывает ящик. «Или остаёмся здесь, на связи. Спасатели уже вышли».",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "lev_options"
+        },
+        "lev_options": {
+          "id": "lev_options",
+          "characterId": "lev",
+          "text": "«Все три варианта рабочие. Я останусь у рации». Лев смотрит на Миру. «Тебе нужен второй человек, но не ещё один начальник». «Если берег отменит работу, прекращаем. Не рискуйте из-за того, что мне стыдно за старый маяк».",
+          "camera": {
+            "targetCharacterId": "lev"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "decision"
+        },
+        "decision": {
+          "id": "decision",
+          "characterId": "protagonist",
+          "text": "Берег разрешает проверку резерва. Верхняя тропа пока открыта; переносной огонь может помочь при подходе к стоянке. Мира ждёт ответа. Вы не знаете оборудование, но можете слушать, помогать и останавливаться, когда нужно.",
           "choices": [
             {
-              "id": "night",
-              "text": "Остаться: завтра вместе искать дорогу",
-              "targetNodeId": "keeper_end",
-              "targetSceneId": "ending",
-              "targetSceneStartEffect": "NONE"
+              "id": "reserve",
+              "text": "Помочь Мире проверить резервный огонь здесь",
+              "targetNodeId": "reserve_start"
             },
             {
-              "id": "leave_now",
-              "text": "Предложить закончить разговор на другом берегу",
-              "targetNodeId": "invitation"
+              "id": "path",
+              "text": "Вместе отнести огонь на верхний береговой пост",
+              "targetNodeId": "path_start",
+              "targetSceneId": "path",
+              "targetSceneStartEffect": "FADE"
+            },
+            {
+              "id": "radio",
+              "text": "Остаться на связи и координировать помощь с берега",
+              "targetNodeId": "radio_start"
             }
           ]
+        },
+        "reserve_start": {
+          "id": "reserve_start",
+          "characterId": "mira",
+          "text": "«Я проверю внутреннюю площадку. Ты оставайся у двери, ничего сам не включай». Мира проверяет связь и уходит наверх.",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "reserve_start_2"
+        },
+        "reserve_start_2": {
+          "id": "reserve_start_2",
+          "characterId": "mira",
+          "text": "Вскоре она возвращается за сумкой. «Рабочее место сухое. Продолжим». Вы подаёте нужный инструмент и записываете её сообщения.",
+          "nextNodeId": "reserve_wait"
+        },
+        "reserve_wait": {
+          "id": "reserve_wait",
+          "characterId": "lev",
+          "text": "«Она половину мастерской сама подняла», — тихо говорит Лев. «Иногда уезжающим кажется, что оставшиеся просто не успели уехать». В тетради напротив многих выполненных работ стоит буква “М”. Раньше вы этого не замечали.",
+          "camera": {
+            "targetCharacterId": "lev"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "reserve_answer"
+        },
+        "reserve_answer": {
+          "id": "reserve_answer",
+          "characterId": "protagonist",
+          "text": "«Я боялся вернуться и снова стать тем, кто здесь ничего не решает». Сказав это, вы вспоминаете оценщика, которого прислали без Миры.",
+          "nextNodeId": "reserve_answer_2"
+        },
+        "reserve_answer_2": {
+          "id": "reserve_answer_2",
+          "characterId": "protagonist",
+          "text": "Лев кивает. «Ей скажи. Только потом». Вы берёте ручку и записываете очередное сообщение с берега.",
+          "nextNodeId": "reserve_test"
+        },
+        "reserve_test": {
+          "id": "reserve_test",
+          "characterId": "mira",
+          "text": "«Резерв держится. Основной огонь сегодня не трогаем». Мира просит вас засечь время. Вы ждёте минуту, затем вторую.",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "reserve_test_2"
+        },
+        "reserve_test_2": {
+          "id": "reserve_test_2",
+          "characterId": "mira",
+          "text": "За окном появляется слабый неподвижный свет. Берег подтверждает: огонь различим. Мира прислоняется к стене и разжимает пальцы.",
+          "nextNodeId": "reserve_report"
+        },
+        "reserve_report": {
+          "id": "reserve_report",
+          "characterId": "lev",
+          "text": "«“Вега” подходит к стоянке. Сопровождение рядом». Лев выдыхает. «Хорошо сработали». Мира поправляет: «Все. И те, кто сейчас там». Вы записываете: «Резерв работает». До конца проводки ещё нужно оставаться на связи.",
+          "camera": {
+            "targetCharacterId": "lev"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "after_night",
+          "nextSceneId": "dawn",
+          "nextSceneStartEffect": "FADE"
+        },
+        "radio_start": {
+          "id": "radio_start",
+          "characterId": "mira",
+          "text": "«Хорошо. Тогда следим за сообщениями». Мира раскладывает записи по времени. Лев подтверждает берегу: огня нет, людей снаружи нет. У каждого появляется работа. Никто больше не смотрит на дверь в ожидании, что кто-нибудь всё-таки выйдет.",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "radio_wait"
+        },
+        "radio_wait": {
+          "id": "radio_wait",
+          "characterId": "protagonist",
+          "text": "В рации долгая пауза. Хочется предложить ещё что-нибудь, лишь бы не ждать. Мира молча показывает вам следующую строку журнала. Вы отмечаете время и повторяете сообщение, которое Лев не расслышал за ветром. Потом ждёте вместе.",
+          "nextNodeId": "radio_report"
+        },
+        "radio_report": {
+          "id": "radio_report",
+          "characterId": "lev",
+          "text": "«Сопровождение подошло. Судно ведут по приборам. На борту все в порядке». Лев дожидается повторного подтверждения и кладёт рацию.",
+          "camera": {
+            "targetCharacterId": "lev"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "radio_report_2"
+        },
+        "radio_report_2": {
+          "id": "radio_report_2",
+          "characterId": "lev",
+          "text": "«Утром потребую остановить эксплуатацию до ремонта. Столько лет боялся закрытия, что помогал делать вид, будто здесь всё хорошо».",
+          "nextNodeId": "after_night",
+          "nextSceneId": "dawn",
+          "nextSceneStartEffect": "FADE"
         }
       }
     },
-    "crossing": {
-      "id": "crossing",
-      "backgroundResource": "files/scenes/river.png",
+    "path": {
+      "id": "path",
+      "backgroundResource": "files/scenes/storm_path_dark.png",
       "nodes": {
-        "alone": {
-          "id": "alone",
+        "path_start": {
+          "id": "path_start",
           "characterId": "narrator",
-          "text": "У реки никого нет. Ключ подходит к замку на тросе, и лодка сама скользит к ближнему причалу. Из хижины не видно света. Вы садитесь на скамью и впервые замечаете, как сильно устали. Дом совсем близко; можно просто оттолкнуться.",
+          "text": "Вы несёте ящик по верхней тропе, за каменной стеной. Мира задаёт шаг. На первом повороте она останавливается проверить связь. Маяк позади тёмный. Документы под вашей курткой кажутся вещью из другой жизни.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "position": "LEFT",
+              "worldX": 0.32,
+              "groundY": 0.9,
+              "scale": 1,
+              "visible": true
+            }
+          ],
           "cameraStart": {
-            "focusX": 1
+            "focusX": 0.08
           },
           "camera": {
-            "focusX": 0
+            "focusX": 0.85
           },
           "cameraDurationMs": 3500,
-          "nextNodeId": "alone_choice"
+          "nextNodeId": "path_rules"
         },
-        "alone_choice": {
-          "id": "alone_choice",
-          "characterId": "narrator",
-          "text": "В кармане шуршит записка. Вы можете вернуться к тому, кто ждёт вас, не решая за старика его жизнь. Но можно ещё раз окликнуть его и оставить возможность ответить. Оба решения требуют честности: времени на бесконечные обещания больше нет.",
-          "choices": [
-            {
-              "id": "depart",
-              "text": "Переправиться и ответить сестре",
-              "targetNodeId": "home_trip",
-              "conditions": {
-                "resolve": 0
-              }
-            },
-            {
-              "id": "call",
-              "text": "Окликнуть старика перед отплытием",
-              "targetNodeId": "call"
-            }
-          ]
-        },
-        "call": {
-          "id": "call",
-          "characterId": "narrator",
-          "text": "Вы зовёте не перевозчика, а человека. «Если хотите идти, я подожду до третьего удара!» На тропинке появляется слабый огонёк. Старик идёт медленно, но не останавливается. В руках у него колокол. «Лучше поздно ответить, чем снова промолчать», — говорит он.",
-          "stageCharacters": [
-            {
-              "characterId": "old_man",
-              "position": "RIGHT",
-              "scale": 0.8,
-              "visible": true
-            }
-          ],
-          "nextNodeId": "together_board"
-        },
-        "together": {
-          "id": "together",
-          "characterId": "narrator",
-          "text": "Река встречает вас тишиной. Трос ослаб, лодка покачивается посредине потока. Вы ставите колокол на край причала. Один короткий звон — и лодка поворачивается к берегу. Только после этого старик выходит из темноты на доски.",
-          "cameraStart": {
-            "focusX": 0.1
-          },
+        "path_rules": {
+          "id": "path_rules",
+          "characterId": "mira",
+          "text": "«Если дальше хуже, возвращаемся. Нижней тропой не срезаем». Мира ждёт вашего ответа. Вы говорите: «Ты знаешь дорогу. Я за тобой».",
           "camera": {
-            "focusX": 0.9
+            "targetCharacterId": "mira"
           },
-          "cameraDurationMs": 4000,
-          "nextNodeId": "together_board"
+          "cameraDurationMs": 1100,
+          "nextNodeId": "path_stop"
         },
-        "together_board": {
-          "id": "together_board",
+        "path_stop": {
+          "id": "path_stop",
           "characterId": "narrator",
-          "text": "Старик садится на корме. Без привычной верёвки он не знает, куда деть руки. Вы протягиваете ему весло. Теперь никто не обязан удерживать чужую дорогу в одиночку. Когда лодка отходит, хижина исчезает за деревьями; остаётся обычный лес.",
-          "stageCharacters": [
-            {
-              "characterId": "old_man",
-              "position": "RIGHT",
-              "scale": 0.8,
-              "visible": true
-            }
-          ],
-          "nextNodeId": "midstream"
-        },
-        "midstream": {
-          "id": "midstream",
-          "characterId": "narrator",
-          "text": "Посреди реки слышится третий удар. На миг вода становится зеркалом, и в нём видны две дороги: освещённая платформа и тихий причал с длинной цепочкой огней. Старик спрашивает, какой берег ваш. Вы узнаёте станционный фонарь, но любопытство не отпускает.",
-          "cameraStart": {
-            "focusX": 0.9
-          },
-          "camera": {
-            "focusX": 0.1
-          },
-          "cameraDurationMs": 4500,
-          "choices": [
-            {
-              "id": "station",
-              "text": "Направить лодку к станции",
-              "targetNodeId": "shared_trip"
-            },
-            {
-              "id": "lights",
-              "text": "Подойти к цепочке огней",
-              "targetNodeId": "lights"
-            }
-          ]
-        },
-        "lights": {
-          "id": "lights",
-          "characterId": "narrator",
-          "text": "Каждый огонёк оказывается фонарём на пустой лодке. Здесь ждут дороги, которые ещё никто не закончил. Старик качает головой: «Нам не нужно проживать их все». Среди отражений вы видите лицо сестры; она смотрит не на реку, а на экран телефона.",
-          "stageCharacters": [
-            {
-              "characterId": "old_man",
-              "position": "LEFT",
-              "scale": 0.85,
-              "visible": true
-            }
-          ],
-          "nextNodeId": "lights_choice"
-        },
-        "lights_choice": {
-          "id": "lights_choice",
-          "characterId": "narrator",
-          "text": "Колокол нагрелся в вашей ладони. Можно разбудить весь причал, чтобы путники нашли свои лодки, но тогда ваша переправа закончится здесь. Можно оставить фонарь на досках и плыть домой. Вы не обязаны спасать всех, чтобы заслужить возвращение.",
-          "choices": [
-            {
-              "id": "beacon",
-              "text": "Остаться и зажечь огни для следующих путников",
-              "targetNodeId": "beacon_trip"
-            },
-            {
-              "id": "return_home",
-              "text": "Оставить фонарь и вернуться к станции",
-              "targetNodeId": "shared_trip"
-            }
-          ]
-        },
-        "home_trip": {
-          "id": "home_trip",
-          "characterId": "narrator",
-          "text": "Вы гребёте к станции. На середине реки телефон оживает: «Я всё ещё здесь». Вы отвечаете: «Я опоздал. Прости. Скоро буду». На этот раз это не способ закончить разговор — вы уже видите человека на платформе и машете ему свободной рукой.",
-          "stageCharacters": [],
+          "text": "У укрытия Мира ставит ящик и снимает перчатку. На ладони красная полоса. Вы предлагаете поменяться сторонами, она соглашается. Пока ждёте сообщения с берега, Мира спрашивает: «Почему ты не приехал в тот последний четверг?»",
           "camera": {
             "focusX": 0.5
           },
-          "cameraDurationMs": 2000,
-          "nextNodeId": "home_end",
-          "nextSceneId": "ending",
-          "nextSceneStartEffect": "FADE"
+          "cameraDurationMs": 1600,
+          "nextNodeId": "path_truth"
         },
-        "shared_trip": {
-          "id": "shared_trip",
-          "characterId": "narrator",
-          "text": "Вы гребёте по очереди. На берегу старик долго не решается выйти, затем делает шаг на землю. «Теперь сам», — говорит он. Телефон показывает десяток пропущенных звонков. Вы набираете сестру и остаётесь на линии, пока идёте к станции.",
-          "nextNodeId": "shared_end",
-          "nextSceneId": "ending",
-          "nextSceneStartEffect": "FADE"
+        "path_truth": {
+          "id": "path_truth",
+          "characterId": "protagonist",
+          "text": "«Я испугался. По телефону мама звучала как всегда. Думал: пока не приеду, можно верить, что времени ещё много». Мира смотрит на застёжку перчатки. По рации подтверждают: можно продолжать. Но она пока не берёт ящик.",
+          "nextNodeId": "path_mira"
         },
-        "beacon_trip": {
-          "id": "beacon_trip",
+        "path_mira": {
+          "id": "path_mira",
+          "characterId": "mira",
+          "text": "«Я тоже испугалась. Только мне было некуда отложить». Мира затягивает перчатку. «Не оставайся теперь из наказания. Просто не исчезай снова». Вы отвечаете: «Постараюсь». Она кивает. Вы поднимаете ящик вместе.",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "path_post"
+        },
+        "path_post": {
+          "id": "path_post",
           "characterId": "narrator",
-          "text": "Вы ставите колокол на причал и звоните трижды. Далеко в лесу отвечают шаги. Старик зажигает первый фонарь, вы — следующий. Сестре вы пишете правду: «Сегодня не приеду. Я объясню всё, когда смогу». Ответ приходит сразу: «Только не исчезай». Вы обещаете именно это.",
-          "nextNodeId": "beacon_end",
-          "nextSceneId": "ending",
+          "text": "На посту есть крыша и сухая площадка. Мира проверяет оборудование, вы держите связь. Огонь включают только после подтверждения с берега.",
+          "camera": {
+            "focusX": 0.78
+          },
+          "cameraDurationMs": 2500,
+          "nextNodeId": "path_post_2"
+        },
+        "path_post_2": {
+          "id": "path_post_2",
+          "characterId": "narrator",
+          "text": "На мокрых камнях появляется светлое пятно. Вы вглядываетесь в темноту и ждёте ответа с судна.",
+          "nextNodeId": "path_confirm"
+        },
+        "path_confirm": {
+          "id": "path_confirm",
+          "characterId": "mira",
+          "text": "«Огонь видят. Судно с сопровождением, все четверо в порядке». Мира дослушивает сообщение. «Ждём разрешения уйти и возвращаемся той же дорогой».",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "path_confirm_2"
+        },
+        "path_confirm_2": {
+          "id": "path_confirm_2",
+          "characterId": "mira",
+          "text": "Она садится на ящик. Вы устраиваетесь рядом. Можно просто помолчать, не придумывая повод закончить разговор.",
+          "nextNodeId": "after_night",
+          "nextSceneId": "dawn",
           "nextSceneStartEffect": "FADE"
         }
       }
     },
-    "ending": {
-      "id": "ending",
-      "backgroundResource": "files/scenes/ending.png",
+    "dawn": {
+      "id": "dawn",
+      "backgroundResource": "files/scenes/harbor_dawn.png",
       "nodes": {
-        "home_end": {
-          "id": "home_end",
+        "after_night": {
+          "id": "after_night",
           "characterId": "narrator",
-          "text": "КОНЦОВКА «ОТВЕТИТЬ ВОВРЕМЯ»\n\nСестра встречает вас у станции. Вы рассказываете о лесе, не требуя, чтобы она поверила. Утром записка высыхает, и чужая надпись исчезает. Вы не знаете, ушёл ли старик. Но впервые не откладываете звонок человеку, которому можете ответить сейчас.",
+          "text": "К рассвету «Вега» стоит в защищённой бухте. Проводка завершена. На палубе двигаются люди; рядом покачивается спасательное судно. Вы выходите к гавани. Лев идёт медленно и не спорит, когда Мира помогает ему на ступенях.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "position": "LEFT",
+              "worldX": 0.32,
+              "groundY": 0.9,
+              "scale": 1,
+              "visible": true
+            },
+            {
+              "characterId": "lev",
+              "position": "RIGHT",
+              "worldX": 0.68,
+              "groundY": 0.9,
+              "scale": 1,
+              "visible": true
+            }
+          ],
           "cameraStart": {
             "focusX": 0.1
+          },
+          "camera": {
+            "focusX": 0.82
+          },
+          "cameraDurationMs": 3500,
+          "nextNodeId": "lev_morning"
+        },
+        "lev_morning": {
+          "id": "lev_morning",
+          "characterId": "lev",
+          "text": "«Журнал приложу к заявке. До проверки никакого “ещё денёк потерпит”». Лев смотрит на гавань. «Спасибо, что не дали мне опять полезть одному». Мира усмехается: «Мы тебе не начальство». — «Вот начальства я обычно и не слушал».",
+          "camera": {
+            "targetCharacterId": "lev"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "mira_morning"
+        },
+        "mira_morning": {
+          "id": "mira_morning",
+          "characterId": "mira",
+          "text": "«Мне надо поспать. Потом я буду злая, предупреждаю». Мира впервые улыбается. «Одна ночь не отменяет остальное. Но хорошо, что ты был здесь».",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "alone"
+        },
+        "alone": {
+          "id": "alone",
+          "characterId": "narrator",
+          "text": "Лев уходит в портовую контору. Мира протягивает вам ключ от дома. На кольце — пластиковая рыбка, ваш школьный подарок матери. Документы промокли по краям. Подписи в них пока нет.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "position": "LEFT",
+              "worldX": 0.32,
+              "groundY": 0.9,
+              "scale": 1,
+              "visible": true
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "apology"
+        },
+        "apology": {
+          "id": "apology",
+          "characterId": "protagonist",
+          "text": "«Прости за оценщика. И что оставил тебе все разговоры, которых сам боялся». Вы не добавляете оправданий. «Я отзову поручение. Давай сначала решим вместе: чего хотим и что действительно можем делать».",
+          "nextNodeId": "mira_terms"
+        },
+        "mira_terms": {
+          "id": "mira_terms",
+          "characterId": "mira",
+          "text": "«Я не хочу жить в музее. Вещи можно раздать. Дом можно продать. Только сначала давай в нём посидим». Мира отдаёт ключ. «И я могу уехать. Когда-нибудь. Не строй план, в котором я всегда всё подхватываю».",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "future"
+        },
+        "future": {
+          "id": "future",
+          "characterId": "protagonist",
+          "text": "Паром задержан. Есть время вернуться в дом, поспать, открыть окна. А потом обсудить расходы, приезды и право каждого передумать.",
+          "choices": [
+            {
+              "id": "sell",
+              "text": "Предложить подготовить продажу вместе, без спешки",
+              "targetNodeId": "sell_talk"
+            },
+            {
+              "id": "winter",
+              "text": "Предложить вернуться на зиму и разделить заботы",
+              "targetNodeId": "winter_talk"
+            },
+            {
+              "id": "shared",
+              "text": "Сохранить дом на год с общим планом расходов и приездов",
+              "targetNodeId": "shared_talk"
+            },
+            {
+              "id": "distance",
+              "text": "Признать, что пока можете помочь только на расстоянии",
+              "targetNodeId": "distance_talk"
+            }
+          ]
+        },
+        "sell_talk": {
+          "id": "sell_talk",
+          "characterId": "mira",
+          "text": "«Сначала разберём вещи. Не за одни выходные», — говорит Мира. «А за мастерскую я решу сама». Вы соглашаетесь. Теперь продажа начинается с разговора, а не с готовой бумаги.",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "sell_end",
+          "nextSceneId": "endings",
+          "nextSceneStartEffect": "FADE"
+        },
+        "winter_talk": {
+          "id": "winter_talk",
+          "characterId": "mira",
+          "text": "«Не увольняйся сегодня. Узнай, сможешь ли работать отсюда. Приезжай на месяц, не навсегда». Мира смотрит прямо на вас.",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "winter_talk_2"
+        },
+        "winter_talk_2": {
+          "id": "winter_talk_2",
+          "characterId": "mira",
+          "text": "«Я рада. Но не хочу потом услышать, что ты пожертвовал жизнью ради меня». Вы договариваетесь о пробном месяце и своей части забот.",
+          "nextNodeId": "winter_end",
+          "nextSceneId": "endings",
+          "nextSceneStartEffect": "FADE"
+        },
+        "shared_talk": {
+          "id": "shared_talk",
+          "characterId": "mira",
+          "text": "«На год — можно. Потом решаем снова». Вы договариваетесь разделить платежи, проверить крышу и составить календарь приездов. Мира первой вписывает две недели отпуска вне острова. Вы открываете календарь, чтобы занять эти даты.",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "shared_end",
+          "nextSceneId": "endings",
+          "nextSceneStartEffect": "FADE"
+        },
+        "distance_talk": {
+          "id": "distance_talk",
+          "characterId": "mira",
+          "text": "«Спасибо, что не обещаешь переехать. Тогда ты берёшь документы, счета и мастеров. Через два месяца решаем снова». Мира добавляет: «И звони не только когда что-то сломалось». Вы заносите дату в календарь при ней.",
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 1100,
+          "nextNodeId": "distance_end",
+          "nextSceneId": "endings",
+          "nextSceneStartEffect": "FADE"
+        }
+      }
+    },
+    "endings": {
+      "id": "endings",
+      "backgroundResource": "files/scenes/harbor_dawn.png",
+      "nodes": {
+        "sell_end": {
+          "id": "sell_end",
+          "characterId": "narrator",
+          "text": "КОНЦОВКА «КЛЮЧ ДЛЯ ДРУГИХ»\n\nДом продают весной. Мира забирает кухонную лампу, вы — материнскую тетрадь. Новым хозяевам достаётся исправная крыша.",
+          "stageCharacters": [],
+          "cameraStart": {
+            "focusX": 0.12
           },
           "camera": {
             "focusX": 0.65
           },
-          "cameraDurationMs": 3500,
+          "cameraDurationMs": 4000,
+          "nextNodeId": "sell_end_2"
+        },
+        "sell_end_2": {
+          "id": "sell_end_2",
+          "characterId": "narrator",
+          "text": "Последний день в доме вы проводите вместе. Не пытаетесь оставить всё на прежних местах.",
+          "nextNodeId": "sell_end_3"
+        },
+        "sell_end_3": {
+          "id": "sell_end_3",
+          "characterId": "narrator",
+          "text": "На пароме Мира едет с вами выбирать станок для мастерской. Это её решение. Вы здесь, чтобы помочь донести.",
+          "choices": []
+        },
+        "winter_end": {
+          "id": "winter_end",
+          "characterId": "narrator",
+          "text": "КОНЦОВКА «ЗИМНИЙ АДРЕС»\n\nВ ноябре вы приезжаете на месяц. Интернет обрывается, стол шатается. Вы с Мирой ссоритесь из-за отопления и миритесь за ужином.",
+          "stageCharacters": [],
+          "cameraStart": {
+            "focusX": 0.85
+          },
+          "camera": {
+            "focusX": 0.4
+          },
+          "cameraDurationMs": 4000,
+          "nextNodeId": "winter_end_2"
+        },
+        "winter_end_2": {
+          "id": "winter_end_2",
+          "characterId": "narrator",
+          "text": "Теперь вы знаете, сколько забот требует неделя в этом доме. И больше не оставляете их сестре молча.",
+          "nextNodeId": "winter_end_3"
+        },
+        "winter_end_3": {
+          "id": "winter_end_3",
+          "characterId": "narrator",
+          "text": "В материнской тетради появляются два почерка. Рядом с ремонтом кухни — дата. Ниже Мира приписала: «Сначала выспаться».",
           "choices": []
         },
         "shared_end": {
           "id": "shared_end",
           "characterId": "narrator",
-          "text": "КОНЦОВКА «ДВА БИЛЕТА»\n\nУ кассы старик покупает билет и долго рассматривает дату. На прощание он кивает вам, как попутчику. Сестра сердится и обнимает одновременно. Спустя неделю приходит открытка: «Доехал. Поговорили». Подписи нет. Вам и не нужна подпись.",
+          "text": "КОНЦОВКА «ДОМ С ДВУМЯ КЛЮЧАМИ»\n\nЛетом Мира уезжает в отпуск, а вы встречаете кровельщиков. Переносы обсуждают, расходы записывают. Через год решите заново.",
+          "stageCharacters": [],
+          "cameraStart": {
+            "focusX": 0.1
+          },
+          "camera": {
+            "focusX": 0.7
+          },
+          "cameraDurationMs": 4000,
+          "nextNodeId": "shared_end_2"
+        },
+        "shared_end_2": {
+          "id": "shared_end_2",
+          "characterId": "narrator",
+          "text": "На маяке меняют питание. Лев впервые берёт полноценный отпуск.",
+          "nextNodeId": "shared_end_3"
+        },
+        "shared_end_3": {
+          "id": "shared_end_3",
+          "characterId": "narrator",
+          "text": "Однажды вы звоните сестре рассказать, как пахнет сад после дождя. Она отвечает не сразу. Вы никуда не торопитесь.",
+          "choices": []
+        },
+        "distance_end": {
+          "id": "distance_end",
+          "characterId": "narrator",
+          "text": "КОНЦОВКА «СВЯЗЬ С БЕРЕГОМ»\n\nВы возвращаетесь в город. Разговор с подрядчиком тянется час. Раньше вы бы переслали номер Мире, теперь договариваетесь сами.",
+          "stageCharacters": [],
           "cameraStart": {
             "focusX": 0.9
           },
           "camera": {
             "focusX": 0.35
           },
-          "cameraDurationMs": 3500,
-          "choices": []
+          "cameraDurationMs": 4000,
+          "nextNodeId": "distance_end_2"
         },
-        "keeper_end": {
-          "id": "keeper_end",
+        "distance_end_2": {
+          "id": "distance_end_2",
           "characterId": "narrator",
-          "text": "КОНЦОВКА «ДО УТРА»\n\nТретий удар проходит, пока вы слушаете. Впервые календарный лист переворачивается. Утром лодки у причала нет, но лес уже не кажется клеткой. Вы со стариком чините ступени и обсуждаете дорогу к станции. Возвращение отложено; теперь у него есть день, а у ожидания — конец.",
-          "cameraStart": {
-            "focusX": 0
-          },
-          "camera": {
-            "focusX": 0.5
-          },
-          "cameraDurationMs": 3000,
-          "choices": []
+          "text": "По воскресеньям созваниваетесь. Иногда Мира всё ещё сердится. Вы учитесь не завершать разговор на этом месте.",
+          "nextNodeId": "distance_end_3"
         },
-        "beacon_end": {
-          "id": "beacon_end",
+        "distance_end_3": {
+          "id": "distance_end_3",
           "characterId": "narrator",
-          "text": "КОНЦОВКА «ОГНИ НА ВОДЕ»\n\nК причалу выходит первый путник. Вы не обещаете спасти его и не выбираете за него берег. Просто показываете лодку и слушаете. Старик наливает чай. На столе лежит телефон, который теперь всегда включён. Вы остались здесь по собственному решению — и знаете, что однажды сможете уйти.",
-          "cameraStart": {
-            "focusX": 1
-          },
-          "camera": {
-            "focusX": 0.5
-          },
-          "cameraDurationMs": 3000,
+          "text": "Через два месяца приходит напоминание: обсудить дом. Вы звоните первым.",
           "choices": []
         }
       }

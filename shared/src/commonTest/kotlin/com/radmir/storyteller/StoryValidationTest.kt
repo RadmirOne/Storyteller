@@ -23,7 +23,7 @@ class StoryValidationTest {
     }
 
     @Test fun rejectsUnsupportedVersionAndMissingStart() {
-        assertFailsWith<StoryValidationException> { validateStory(script().copy(schemaVersion = 2)) }
+        assertFailsWith<StoryValidationException> { validateStory(script().copy(schemaVersion = 3)) }
         assertFailsWith<StoryValidationException> { validateStory(script().copy(startNodeId = "missing")) }
         assertFailsWith<StoryValidationException> { validateStory(script().copy(startSceneId = "missing")) }
     }
