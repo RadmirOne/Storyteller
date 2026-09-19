@@ -35,9 +35,8 @@
           "characterId": "narrator",
           "text": "Паром отходит от острова. Три года назад мать махала вам с причала до самого поворота. Сегодня у ограды никого.",
           "camera": {
-            "focusX": 0.1
+            "focusX": 0.0
           },
-          "cameraDurationMs": 1,
           "stageCharacters": [],
           "nextNodeId": "start_2"
         },
