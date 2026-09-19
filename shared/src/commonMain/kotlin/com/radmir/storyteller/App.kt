@@ -14,6 +14,8 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.key
+import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,7 +33,7 @@ import com.radmir.storyteller.viewmodel.StoryViewModel
 
 @Composable
 @Preview
-fun App() {
+fun App(debugToolsEnabled: Boolean = false) {
     MaterialTheme(colorScheme = darkColorScheme(
         primary = Color(0xFFE3BB79),
         onPrimary = Color(0xFF19252C),
@@ -41,13 +43,36 @@ fun App() {
     )) {
         var showStory by remember { mutableStateOf(false) }
         var showJournal by remember { mutableStateOf(false) }
+        var showDebug by remember { mutableStateOf(false) }
 
         val progressStore = rememberProgressStore()
-        val storyViewModel = remember(progressStore) { StoryViewModel(progressStore) }
+        val storyViewModel = remember(progressStore, debugToolsEnabled) { StoryViewModel(progressStore, debugToolsEnabled) }
+        val debugNavigation by storyViewModel.debugNavigation.collectAsState()
+        val gameState by storyViewModel.gameState.collectAsState()
+        val playbackRevision by storyViewModel.playbackRevision.collectAsState()
         val savedStory by storyViewModel.savedStory.collectAsState()
         val saveError by storyViewModel.saveError.collectAsState()
         val journal by storyViewModel.journal.collectAsState()
         if (showJournal) JournalDialog(journal, onClose = { showJournal = false })
+        if (debugToolsEnabled && showDebug && showStory) {
+            AlertDialog(onDismissRequest = { showDebug = false },
+                title = { Text("Отладка прохождения") },
+                text = {
+                    Column {
+                        Text("${gameState?.currentSceneId} / ${gameState?.currentNodeId}")
+                        TextButton(onClick = { storyViewModel.debugPreviousNode() }, enabled = debugNavigation.canGoBack) {
+                            Text("← Предыдущий узел")
+                        }
+                        TextButton(onClick = { storyViewModel.debugUndoChoice() }, enabled = debugNavigation.canUndoChoice) {
+                            Text("Отменить последний выбор")
+                        }
+                        TextButton(onClick = { storyViewModel.debugPreviousScene() }, enabled = debugNavigation.canGoToPreviousScene) {
+                            Text("← Предыдущая сцена")
+                        }
+                        Text("Возврат обновляет журнал и автосохранение.", style = MaterialTheme.typography.bodySmall)
+                    }
+                }, confirmButton = { TextButton(onClick = { showDebug = false }) { Text("Закрыть") } })
+        }
 
         Column(
             modifier = Modifier
@@ -65,6 +90,7 @@ fun App() {
                         modifier = Modifier.weight(1f).padding(horizontal = 12.dp),
                         maxLines = 1, overflow = TextOverflow.Ellipsis)
                     TextButton(onClick = { showJournal = true }) { Text("Журнал") }
+                    if (debugToolsEnabled) TextButton(onClick = { showDebug = true }) { Text("Debug") }
                 }
                 saveError?.let {
                     Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -73,7 +99,9 @@ fun App() {
                         TextButton(onClick = { storyViewModel.saveProgress() }) { Text("Повторить") }
                     }
                 }
-                StoryScreen(viewModel = storyViewModel, onReturnToMenu = { showStory = false })
+                key(playbackRevision) {
+                    StoryScreen(viewModel = storyViewModel, onReturnToMenu = { showStory = false })
+                }
             } else {
                 StoriesScreen(savedStory = savedStory, saveError = saveError,
                     hasPlayed = storyViewModel.currentScript.value != null, onStoryContinued = { json ->

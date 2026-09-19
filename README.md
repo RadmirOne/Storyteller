@@ -49,3 +49,4 @@ APK: `androidApp/build/outputs/apk/debug/androidApp-debug.apk`.
 - [Тестовая история и маршруты проверки](docs/test-story.md)
 - [Изображения и промпты генерации](docs/art-direction.md)
 - [Сохранения и журнал](docs/progress.md)
+- [Возврат по прохождению в debug-сборке](docs/debug-navigation.md)

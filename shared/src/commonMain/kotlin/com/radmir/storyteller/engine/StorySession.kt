@@ -13,6 +13,7 @@ internal class StorySession(json: String, progress: StoryProgress? = null) {
     val state: GameState get() = engine.getGameState()!!
     val node: DialogueNode get() = engine.getCurrentNode()!!
     private val steps = mutableListOf<ProgressStep>()
+    private val sceneTrail = mutableListOf<String>()
     private val entries = mutableListOf<JournalEntry>()
     val journal: List<JournalEntry> get() = entries.toList()
     private var stage = emptyList<StageCharacter>()
@@ -29,6 +30,7 @@ internal class StorySession(json: String, progress: StoryProgress? = null) {
         }
         rebuild(null, SceneStartEffect.NONE)
         appendPage()
+        sceneTrail.add(state.currentSceneId)
         progress?.steps?.forEach { step ->
             if (!move(step.choiceId)) throw ProgressException("Сохранение повреждено: не удалось восстановить маршрут.")
         }
@@ -41,6 +43,9 @@ internal class StorySession(json: String, progress: StoryProgress? = null) {
 
     fun progress(): StoryProgress = StoryProgress(story, steps.toList())
 
+    fun previousSceneStepCount(): Int? = sceneTrail.indexOfLast { it != state.currentSceneId }
+        .takeIf { it >= 0 }
+
     fun move(choiceId: String?): Boolean {
         val previous = state
         val oldNode = node
@@ -51,6 +56,7 @@ internal class StorySession(json: String, progress: StoryProgress? = null) {
         if (choice != null) entries.add(JournalEntry(previous.currentSceneId, previous.currentNodeId,
             "Ваш выбор", choice.text, isChoice = true))
         steps.add(ProgressStep(choiceId))
+        sceneTrail.add(next.currentSceneId)
         val effect = if (previous.currentSceneId != next.currentSceneId) {
             if (choiceId == null) oldNode.nextSceneStartEffect else choice?.targetSceneStartEffect
         } else SceneStartEffect.NONE

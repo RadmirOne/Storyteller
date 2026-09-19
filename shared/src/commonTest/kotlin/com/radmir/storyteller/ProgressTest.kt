@@ -29,6 +29,65 @@ class ProgressTest {
     )
     private val json = Json.encodeToString(script)
 
+    @Test fun debugUndoChoiceTruncatesLaterPagesAndAllowsAnotherBranch() {
+        val store = MemoryProgressStore()
+        val vm = StoryViewModel(store, debugToolsEnabled = true).apply {
+            loadStory(json); advance(); selectChoice("hide"); advance()
+        }
+        vm.debugUndoChoice()
+        assertEquals("inherited", vm.currentNode.value!!.id)
+        assertEquals(2, vm.journal.value.size)
+        assertTrue(vm.journal.value.none { it.isChoice })
+        assertEquals(0.7f, vm.sceneUiState.value!!.cameraTarget.focusX)
+        assertEquals(1, vm.sceneUiState.value!!.stage.size)
+        assertEquals("inherited", StoryViewModel(store).apply { continueStory(json) }.currentNode.value!!.id)
+        vm.selectChoice("leave")
+        assertEquals("end", vm.currentNode.value!!.id)
+        assertEquals("Выйти", vm.journal.value.single { it.isChoice }.text)
+        assertTrue(vm.journal.value.none { it.text == "Она выходит" })
+    }
+
+    @Test fun debugPreviousSceneRestoresLastVisitedNodeAndThenPreviousNode() {
+        val store = MemoryProgressStore()
+        StoryViewModel(store).apply { loadStory(json); advance(); selectChoice("hide"); advance() }
+        val vm = StoryViewModel(store, debugToolsEnabled = true).apply { continueStory(json) }
+        assertTrue(vm.debugNavigation.value.canGoToPreviousScene)
+        vm.debugPreviousScene()
+        assertEquals("hidden", vm.currentNode.value!!.id)
+        assertEquals("room", vm.gameState.value!!.currentSceneId)
+        assertTrue(vm.sceneUiState.value!!.stage.isEmpty())
+        assertFalse(vm.debugNavigation.value.canGoToPreviousScene)
+        val revision = vm.playbackRevision.value
+        vm.debugPreviousNode()
+        assertEquals("inherited", vm.currentNode.value!!.id)
+        assertTrue(vm.playbackRevision.value > revision)
+        assertEquals(1, vm.sceneUiState.value!!.stage.size)
+        assertEquals(setOf("room/start"), vm.gameState.value!!.visitedNodes)
+    }
+
+    @Test fun debugNavigationAtStartIsANoOp() {
+        val store = MemoryProgressStore()
+        val vm = StoryViewModel(store, debugToolsEnabled = true).apply { loadStory(json) }
+        val record = store.read()
+        vm.debugPreviousNode(); vm.debugPreviousScene(); vm.debugUndoChoice()
+        assertEquals(record, store.read())
+        assertEquals("start", vm.currentNode.value!!.id)
+        assertFalse(vm.debugNavigation.value.canGoBack)
+        assertFalse(vm.debugNavigation.value.canUndoChoice)
+    }
+
+    @Test fun releaseViewModelRejectsDebugActions() {
+        val store = MemoryProgressStore()
+        val vm = StoryViewModel(store).apply { loadStory(json); advance(); selectChoice("leave") }
+        val record = store.read()
+        vm.debugPreviousNode(); vm.debugPreviousScene(); vm.debugUndoChoice()
+        assertEquals(record, store.read())
+        assertEquals("end", vm.currentNode.value!!.id)
+        assertFalse(vm.debugNavigation.value.canGoBack)
+        assertFalse(vm.debugNavigation.value.canUndoChoice)
+        assertFalse(vm.debugNavigation.value.canGoToPreviousScene)
+    }
+
     @Test fun restoresInheritedStageCameraAndJournalInANewViewModel() {
         val store = MemoryProgressStore()
         val first = StoryViewModel(store).apply { loadStory(json); advance() }
