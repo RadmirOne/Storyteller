@@ -6,6 +6,46 @@
 
 ## Файлы и точные промпты
 
+### wardrobe-scene — прозрачная героиня на сцене
+
+Файл: `shared/src/commonMain/composeResources/files/characters/player/wardrobe-scene.png`. Создан редактированием wardrobe-v2 через встроенный imagegen. Атлас для сцены с прозрачными краями всех девяти ячеек; исходные карточки редактора используют wardrobe-v2. В заголовке диалога портрет больше не дублируется.
+
+```text
+Use case background-extraction. Edit this exact 3x3 character wardrobe atlas. Remove ALL the dark teal painted backgrounds completely and replace them with genuine alpha transparency. Keep all nine women, faces, hair, outfits, exact pixel positions, equal 3x3 cell boundaries and square canvas composition unchanged. No other edits. Preserve fine hair edges and opaque clothing. Every pixel outside each woman's silhouette must be transparent including gaps beside arms. NO colored backdrop, NO gradient, NO glow, NO shadow, NO checkerboard painted into the image. Output transparent RGBA PNG. Characters remain framed head to upper thighs exactly as the input, nine separate cutouts in same uniform 3x3 atlas.
+```
+
+### Илья и Марк — романтические персонажи
+
+Активный сценарий теперь — короткая романтическая история `lighthouse_weekend`. Мира — подруга героини. Илья и Марк созданы встроенным imagegen как отдельные спрайты с alpha; прозрачность проверена тестами. Старые иллюстрации ниже документируют предыдущую версию истории.
+
+Илья: `shared/src/commonMain/composeResources/files/characters/ilya.png`.
+
+```text
+Use case illustration-story. Production character sprite for hand-painted cinematic coastal romantic visual novel. One adult man age 29, Ilya a lighthouse restoration craftsman, handsome thoughtful face, dark wavy hair, subtle stubble, warm brown eyes, restrained kind smile. Rolled-sleeve ivory shirt, charcoal blue work vest, dark trousers, sturdy brown boots. Relaxed standing three-quarter view facing slightly toward viewer, both hands visible naturally at sides. FULL BODY from hair to boots with margins, centered, no cropped feet. Sophisticated digital gouache/oil, realistic anatomy, muted teal shadows and warm amber rim lighting, detailed painterly fabric, matches European animated feature coastal mystery art. Genuine transparent alpha background, no scenery, no floor, no text, no props, no border. Single person only.
+```
+
+Марк: `shared/src/commonMain/composeResources/files/characters/mark.png`.
+
+```text
+Use case illustration-story. Create ONE full body male character sprite on genuinely TRANSPARENT background, RGBA alpha zero everywhere outside the man, NO glow, NO backdrop, NO gradient, NO ground shadow. Adult man 31, Mark, charming local small-ferry captain, sandy blond short hair swept back, blue-gray eyes, clean shaven, warm easy smile, handsome but natural. Navy pea coat open over muted rust knitted sweater, dark navy trousers, practical dark leather boots. Upright relaxed standing three-quarter pose looking toward viewer, arms resting naturally at sides, no hat, no props. Entire body head to soles with small margins. Painterly digital oil/gouache cinematic visual novel illustration, natural anatomy, soft cool teal shadows warm amber highlights ONLY ON THE PERSON, sophisticated illustrated coastal romance aesthetic. Portrait 2:3. No text or borders. Alpha cutout production sprite.
+```
+
+### wardrobe-v2 — выровненная примерка
+
+Активный файл: `shared/src/commonMain/composeResources/files/characters/player/wardrobe-v2.png`. Редактирование исходного атласа встроенным imagegen: единая поза с опущенными руками и согласованные лица и причёски. Исходный атлас сохранён. Это нарисованные варианты, а не послойная модель: абсолютное пиксельное совпадение всех деталей между нарядами не гарантируется.
+
+```text
+Edit target: supplied 3x3 wardrobe atlas for a visual novel. Preserve exact equal 3x3 grid, no borders or gutters, square image. Rows blonde, brunette, redhead; columns teal jacket, plum sweater, olive trench. Correct identity and pose drift: within EACH row the three women must have EXACTLY the same head, facial expression, hairstyle strand placement, head position, neck, body proportions, and arm pose. Use each row's leftmost woman as the immutable identity reference. Both arms hang relaxed at sides in ALL cells; no hands in pockets. Only fabric, garment silhouette, collar and seams change. Same camera scale head to upper thighs. Keep beautiful painterly style and identical dark teal background and lighting. Copy the same face/hair across each row rather than reinterpreting it. Distinct tailored jacket, textured knit sweater, belted trench with clear lapels. No text. Production dress-up atlas, absolutely aligned subjects.
+```
+
+### wardrobe — выбор героини и одежды
+
+Файл: `shared/src/commonMain/composeResources/files/characters/player/wardrobe.png`. Создан встроенным image_gen, без CLI/API. Единый атлас 3×3 для девяти сочетаний внешности и одежды.
+
+```text
+Use case: illustration-story. Create ONE production character selection atlas image for a cinematic hand-painted coastal mystery visual novel. Exact uniform 3 columns by 3 rows grid, nine equal rectangular cells, no gutters, no borders, no text. Overall square image. Each cell shows one adult female protagonist from head to upper thighs, centered, entire head with generous headroom and arms within its cell, same scale and relaxed pose. ROW 1 same blonde woman with wavy shoulder-length golden hair and blue eyes repeated three times. ROW 2 same brunette woman with long dark brown hair, olive skin and brown eyes repeated three times. ROW 3 same copper red-haired woman with freckles, loose braid and green eyes repeated three times. COLUMN 1 each woman wears a tailored deep teal short jacket over ivory top and dark trousers. COLUMN 2 each woman wears a textured plum cable knit sweater and dark trousers. COLUMN 3 each woman wears an olive belted trench coat with lapels. Preserve each woman's exact facial identity and hairstyle across her row, only clothing changes. Beautiful detailed expressive faces, natural adult proportions, sophisticated digital gouache/oil illustration, soft warm amber rim light, cool blue shadows, muted dark teal studio backdrop identical in every cell. Premium visual novel art, not cartoon icons, not photorealistic. No accessories crossing cell edges. This image will be used directly as a 3x3 texture atlas; grid cells must be exactly equal.
+```
+
 ### lighthouse_room_dark
 
 Файл: `shared/src/commonMain/composeResources/files/scenes/lighthouse_room_dark.png`

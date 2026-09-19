@@ -15,6 +15,38 @@ class BundledStoryTest {
         File("src/commonMain/composeResources"), File("shared/src/commonMain/composeResources")
     ).first { it.isDirectory }
 
+    @Test fun allPlayerSceneOutfitsHaveTransparentSurroundings() {
+        val image = ImageIO.read(File(resources, "files/characters/player/wardrobe-scene.png"))
+        assertTrue(image.colorModel.hasAlpha())
+        val width = image.width / 3
+        val height = image.height / 3
+        for (row in 0..2) for (column in 0..2) {
+            fun alpha(x: Int, y: Int) = (image.getRGB(column * width + x, row * height + y) ushr 24) and 255
+            assertEquals(0, alpha(4, height / 2), "Левый край $row/$column")
+            assertEquals(0, alpha(width - 5, height / 2), "Правый край $row/$column")
+            assertTrue(alpha(width / 2, height / 2) >= 240, "Наряд $row/$column должен быть виден")
+        }
+    }
+
+    @Test fun shortRomanceAlwaysStagesTheSpeaker() {
+        val script = StoryRepository().parseScript(File(resources, "files/story.json").readText())
+        val nodes = script.scenes.values.flatMap { it.nodes.values }
+        assertTrue(nodes.size <= 25, "Короткая история: не более 25 узлов")
+        assertEquals(5, nodes.count { it.nextNodeId == null && it.choices.isNullOrEmpty() })
+        assertTrue(script.characters.any { it.id == "ilya" && it.spriteResource != null })
+        assertTrue(script.characters.any { it.id == "mark" && it.spriteResource != null })
+        nodes.forEach { node ->
+            assertTrue(node.text.length <= 200, "${node.id}: реплика слишком длинная")
+            val stage = assertNotNull(node.stageCharacters, "${node.id}: явный состав сцены")
+            if (node.characterId == "protagonist") {
+                assertTrue(stage.isEmpty(), "Героиня показана своим выбранным портретом")
+            } else {
+                assertEquals(listOf(node.characterId), stage.filter { it.visible }.map { it.characterId })
+                assertEquals(node.characterId, node.camera?.targetCharacterId)
+            }
+        }
+    }
+
     @Test fun everyReachablePageCanResumeItsStageAndJournal() {
         val json = File(resources, "files/story.json").readText()
         val pending = ArrayDeque<List<String?>>()

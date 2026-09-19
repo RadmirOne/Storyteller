@@ -14,10 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.radmir.storyteller.screens.scene.CharacterSprite
+import com.radmir.storyteller.screens.scene.DialogueCharacter
 import com.radmir.storyteller.screens.scene.DialogueOverlay
 import com.radmir.storyteller.screens.scene.SceneBackground
 import com.radmir.storyteller.viewmodel.StoryViewModel
+import com.radmir.storyteller.models.PLAYER_CHARACTER_ID
+import com.radmir.storyteller.models.speakerName
 
 @Composable
 fun StoryScreen(viewModel: StoryViewModel = viewModel(), onReturnToMenu: () -> Unit) {
@@ -25,6 +27,7 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel(), onReturnToMenu: () -> U
     val currentNode by viewModel.currentNode.collectAsState()
     val currentScript by viewModel.currentScript.collectAsState()
     val sceneState by viewModel.sceneUiState.collectAsState()
+    val playerCharacter by viewModel.playerCharacter.collectAsState()
 
     // Use local variables to facilitate smart casting and avoid issues with delegated properties
     val current = currentNode
@@ -43,8 +46,9 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel(), onReturnToMenu: () -> U
         return
     }
 
-    val character = script.characters.find { it.id == current.characterId }
-    val speakerName = character?.name ?: "Неизвестный"
+    val speakerName = script.speakerName(current.characterId, playerCharacter)
+    val speakingPlayer = playerCharacter.takeIf { current.characterId == PLAYER_CHARACTER_ID }
+    val displayedScene = scene.copy(stage = emptyList())
 
     Column(
         modifier = Modifier
@@ -53,16 +57,13 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel(), onReturnToMenu: () -> U
     ) {
         // Stable viewport: dialogue length must not resize the camera and actors.
         Box(modifier = Modifier.weight(0.62f).fillMaxWidth()) {
-            SceneBackground(state = scene, characters = script.characters)
-            scene.stage.filter { it.worldX == null }.forEach { stageCharacter ->
-                key(stageCharacter.characterId) {
-                    val sprite = script.characters.find { it.id == stageCharacter.characterId }
-                    CharacterSprite(
-                        stage = stageCharacter,
-                        spriteResource = sprite?.spriteResource
-                    )
-                }
-            }
+            SceneBackground(state = displayedScene, characters = script.characters)
+            DialogueCharacter(
+                speakerName = speakerName,
+                spriteResource = script.characters.find { it.id == current.characterId }?.spriteResource,
+                player = speakingPlayer,
+                modifier = Modifier.fillMaxSize()
+            )
         }
         Box(modifier = Modifier.weight(0.38f).fillMaxWidth()) {
             key(scene.scene.id, current.id) {

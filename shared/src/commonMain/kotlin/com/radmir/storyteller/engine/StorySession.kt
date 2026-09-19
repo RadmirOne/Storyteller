@@ -16,7 +16,7 @@ internal class StorySession(
     val story: StoryScript
     val playerCharacter: PlayerCharacter? = progress?.playerCharacter ?: newPlayerCharacter
     val state: GameState get() = engine.getGameState()!!
-    val node: DialogueNode get() = engine.getCurrentNode()!!
+    val node: DialogueNode get() = story.personalize(engine.getCurrentNode()!!, playerCharacter)
     private val steps = mutableListOf<ProgressStep>()
     private val sceneTrail = mutableListOf<String>()
     private val entries = mutableListOf<JournalEntry>()
@@ -75,7 +75,7 @@ internal class StorySession(
 
     private fun appendPage() {
         entries.add(JournalEntry(state.currentSceneId, node.id,
-            story.characters.find { it.id == node.characterId }?.name ?: "Рассказчик", node.text))
+            story.speakerName(node.characterId, playerCharacter), node.text))
     }
 
     private fun rebuild(previousSceneId: String?, effect: SceneStartEffect) {
