@@ -14,7 +14,7 @@ class PlayerCharacterTest {
         id = id,
         title = "История $id",
         schemaVersion = 2,
-        characters = emptyList(),
+        characters = listOf(Character("narrator", "Рассказчик")),
         startSceneId = "start",
         startNodeId = "first",
         scenes = mapOf(
