@@ -14,5 +14,7 @@ data class DialogueNode(
     val cameraDurationMs: Long? = null,
     val stageCharacters: List<StageCharacter>? = null,
     val nextSceneId: String? = null,
-    val nextSceneStartEffect: SceneStartEffect? = null
+    val nextSceneStartEffect: SceneStartEffect? = null,
+    /** Optional emotional portrait for this page only; null uses the character's default. */
+    val speakerSpriteResource: String? = null
 )

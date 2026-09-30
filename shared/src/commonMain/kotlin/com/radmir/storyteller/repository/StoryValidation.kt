@@ -43,6 +43,10 @@ fun validateStory(script: StoryScript) {
             val path = "$sceneId/$nodeId"
             check(nodeId.isNotBlank() && node.id == nodeId, "$path: id должен совпадать с ключом.")
             check(node.characterId in characters, "$path: неизвестный персонаж ${node.characterId}.")
+            node.speakerSpriteResource?.let {
+                check(script.schemaVersion >= 3, "$path: speakerSpriteResource требует schemaVersion 3.")
+                check(node.characterId != "protagonist", "$path: образ героини задаётся playerOptions.")
+            }
             listOfNotNull(node.camera, node.cameraStart).forEach {
                 check(it.focusX.isFinite() && it.focusX in 0f..1f, "$path: focusX должен быть от 0 до 1.")
                 it.targetCharacterId?.let { id ->
@@ -126,7 +130,8 @@ private fun validateCameraRoutes(script: StoryScript): List<String> {
 }
 
 fun StoryScript.resourcePaths(): Set<String> =
-    (scenes.values.map { it.backgroundResource } + characters.mapNotNull { it.spriteResource }).toSet()
+    (scenes.values.map { it.backgroundResource } + characters.mapNotNull { it.spriteResource } +
+        scenes.values.flatMap { scene -> scene.nodes.values.mapNotNull { it.speakerSpriteResource } }).toSet()
 
 suspend fun validateStoryResources(script: StoryScript, loadImage: suspend (String) -> Unit) {
     val errors = mutableListOf<String>()

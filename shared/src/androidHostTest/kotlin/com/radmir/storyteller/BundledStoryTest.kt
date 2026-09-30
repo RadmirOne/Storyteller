@@ -1,6 +1,9 @@
 package com.radmir.storyteller
 
 import com.radmir.storyteller.engine.StoryEngine
+import com.radmir.storyteller.engine.StorySession
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import com.radmir.storyteller.repository.StoryRepository
 import com.radmir.storyteller.repository.validateStoryResources
 import com.radmir.storyteller.repository.MemoryProgressStore
@@ -30,15 +33,15 @@ class BundledStoryTest {
         }
     }
 
-    @Test fun shortRomanceAlwaysStagesTheSpeaker() {
+    @Test fun demoChapterAlwaysStagesTheSpeaker() {
         val script = StoryRepository().parseScript(File(resources, "files/story.json").readText())
         val nodes = script.scenes.values.flatMap { it.nodes.values }
-        assertTrue(nodes.size <= 25, "Короткая история: не более 25 узлов")
+        assertTrue(nodes.size >= 100, "Демоглава должна содержать полноценные сцены")
         assertEquals(5, nodes.count { it.nextNodeId == null && it.choices.isNullOrEmpty() })
         assertTrue(script.characters.any { it.id == "ilya" && it.spriteResource != null })
         assertTrue(script.characters.any { it.id == "mark" && it.spriteResource != null })
         nodes.forEach { node ->
-            assertTrue(node.text.length <= 200, "${node.id}: реплика слишком длинная")
+            assertTrue(node.text.length <= 300, "${node.id}: реплика слишком длинная")
             val stage = assertNotNull(node.stageCharacters, "${node.id}: явный состав сцены")
             if (node.characterId == "protagonist") {
                 assertTrue(stage.isEmpty(), "Героиня показана своим выбранным портретом")
@@ -58,17 +61,21 @@ class BundledStoryTest {
         while (pending.isNotEmpty()) {
             val route = pending.removeFirst()
             val store = MemoryProgressStore()
-            val original = StoryViewModel(store).apply { loadStory(json) }
-            route.forEach { if (it == null) original.advance() else original.selectChoice(it) }
-            val state = original.gameState.value!!
+            // Replay without serializing the full script after every intermediate step.
+            // Persist the reached page once, then exercise the real Continue path.
+            val original = StorySession(json)
+            route.forEach { assertTrue(original.move(it)) }
+            val state = original.state
             visited.add(state.currentSceneId to state.currentNodeId)
             if (!states.add(state)) continue
+            store.write(Json.encodeToString(original.progress()))
             val restored = StoryViewModel(store).apply { continueStory(json) }
             assertEquals(state, restored.gameState.value)
-            assertEquals(original.sceneUiState.value!!.stage, restored.sceneUiState.value!!.stage)
-            assertEquals(original.sceneUiState.value!!.cameraTarget, restored.sceneUiState.value!!.cameraTarget)
-            assertEquals(original.journal.value, restored.journal.value)
-            val node = original.currentNode.value!!
+            assertEquals(original.scene.stage, restored.sceneUiState.value!!.stage)
+            assertEquals(original.scene.cameraTarget, restored.sceneUiState.value!!.cameraTarget)
+            assertEquals(original.journal, restored.journal.value)
+            assertEquals(original.node, restored.currentNode.value)
+            val node = original.node
             if (node.nextNodeId != null) pending.add(route + listOf(null))
             node.choices.orEmpty().filter { it.availability(state.variables).available }
                 .forEach { pending.add(route + it.id) }
@@ -84,7 +91,9 @@ class BundledStoryTest {
                 assertTrue(node.text.length <= 300, "$sceneId/$nodeId: ${node.text.length} символов, максимум 300")
             }
         }
-        script.characters.mapNotNull { it.spriteResource }.forEach { path ->
+        (script.characters.mapNotNull { it.spriteResource } +
+            script.scenes.values.flatMap { scene -> scene.nodes.values.mapNotNull { it.speakerSpriteResource } })
+            .distinct().forEach { path ->
             val image = ImageIO.read(File(resources, path))
             assertTrue(image.colorModel.hasAlpha(), "$path должен иметь alpha-канал")
             var transparent = 0
@@ -173,7 +182,7 @@ class BundledStoryTest {
                 repeat(4) { advance() }
                 assertEquals("smile", currentNode.value!!.id)
                 selectChoice(earlyChoice)
-                advance(); advance()
+                advanceTo("tower", "choose")
             }
             val restored = StoryViewModel(store).apply { continueStory(json) }
             assertEquals("choose", restored.currentNode.value!!.id)
@@ -188,4 +197,106 @@ class BundledStoryTest {
             }
         }
     }
+
+    private fun StoryViewModel.advanceTo(scene: String, node: String,
+        decisions: Map<String, String> = mapOf(
+            "preparation" to "help_harbour", "courtyard" to "check_together",
+            "opening" to "accept_thanks"
+        )
+    ) {
+        repeat(200) {
+            val state = gameState.value!!
+            if (state.currentSceneId == scene && state.currentNodeId == node) return
+            val page = currentNode.value!!
+            if (page.choices.isNullOrEmpty()) {
+                assertNotNull(page.nextNodeId, "Unexpected ending before $scene/$node")
+                advance()
+            } else {
+                val id = decisions[state.currentSceneId] ?: error("Choose at ${state.currentSceneId}/${page.id}")
+                val choice = page.choices.single { it.id == id }
+                assertTrue(choice.availability(state.variables).available)
+                selectChoice(id)
+            }
+        }
+        fail("Did not reach $scene/$node")
+    }
+
+    @Test fun afternoonAndCreditChoicesUnlockCallbacksWithoutLockingAnyEnding() {
+        val json = File(resources, "files/story.json").readText()
+        for (interest in listOf(false, true)) for (archive in listOf(false, true))
+            for (credit in listOf(false, true)) for (evening in listOf("ilya", "mark", "mira")) {
+                val store = MemoryProgressStore()
+                val vm = StoryViewModel(store).apply { loadStory(json) }
+                val decisions = mapOf(
+                    "arrival" to if (interest) "ask_restoration" else "enjoy_weekend",
+                    "preparation" to if (archive) "read_archive" else "help_harbour",
+                    "courtyard" to if (archive) "use_archive" else "check_together",
+                    "opening" to if (credit) "share_credit" else "accept_thanks"
+                )
+                vm.advanceTo("courtyard", "p12", decisions)
+                val repair = vm.currentNode.value!!.choices!!.single { it.id == "use_archive" }
+                assertEquals(archive, repair.availability(vm.gameState.value!!.variables).available)
+                if (!archive) {
+                    val before = vm.gameState.value
+                    vm.selectChoice("use_archive")
+                    assertEquals(before, vm.gameState.value)
+                }
+                vm.advanceTo("tower", "choose", decisions)
+                assertEquals(interest, vm.currentNode.value!!.choices!!.single { it.id == "see_restoration" }
+                    .availability(vm.gameState.value!!.variables).available)
+                assertTrue(vm.currentNode.value!!.choices!!.filter { it.id.startsWith("with_") }
+                    .all { it.availability(vm.gameState.value!!.variables).available })
+                vm.selectChoice("with_$evening")
+                vm.advanceTo("${evening}_talk", "p10", decisions)
+                val restored = StoryViewModel(store).apply { continueStory(json) }
+                assertEquals(vm.gameState.value, restored.gameState.value)
+                assertEquals(vm.journal.value, restored.journal.value)
+                val expected = when (evening) {
+                    "ilya" -> mapOf("remember_archive" to archive, "remember_credit" to credit)
+                    "mark" -> mapOf("remember_harbour" to !archive, "remember_credit" to credit)
+                    else -> mapOf("remember_team" to credit)
+                }
+                expected.forEach { (id, available) ->
+                    val choice = restored.currentNode.value!!.choices!!.single { it.id == id }
+                    assertEquals(available, choice.availability(restored.gameState.value!!.variables).available)
+                    if (!available) assertFalse(choice.unavailableReason.isNullOrBlank())
+                }
+                val fallback = when (evening) {
+                    "ilya" -> "stay_quiet"
+                    "mark" -> "finish_tea"
+                    else -> "enjoy_tea"
+                }
+                restored.selectChoice(fallback)
+                if (evening == "mira") assertEquals("home", restored.currentNode.value!!.id)
+                else {
+                    assertEquals("ask", restored.currentNode.value!!.id)
+                    assertEquals(2, restored.currentNode.value!!.choices!!.size)
+                    assertTrue(restored.currentNode.value!!.choices!!.all {
+                        it.availability(restored.gameState.value!!.variables).available
+                    })
+                }
+            }
+    }
+
+    @Test fun undoingAfternoonChoiceRemovesItsConsequencesAfterResume() {
+        val json = File(resources, "files/story.json").readText()
+        val store = MemoryProgressStore()
+        val vm = StoryViewModel(store, debugToolsEnabled = true).apply { loadStory(json) }
+        vm.advanceTo("preparation", "p16", mapOf("arrival" to "enjoy_weekend"))
+        vm.selectChoice("read_archive")
+        vm.advanceTo("courtyard", "p12")
+        assertEquals(1, vm.gameState.value!!.variables["archiveClue"])
+        vm.debugUndoChoice()
+        assertEquals("preparation", vm.gameState.value!!.currentSceneId)
+        assertEquals(0, vm.gameState.value!!.variables["archiveClue"])
+        vm.selectChoice("help_harbour")
+        vm.advanceTo("courtyard", "p12")
+        val restored = StoryViewModel(store).apply { continueStory(json) }
+        assertEquals(0, restored.gameState.value!!.variables["archiveClue"])
+        assertEquals(1, restored.gameState.value!!.variables["harbourTrust"])
+        val locked = restored.currentNode.value!!.choices!!.single { it.id == "use_archive" }
+        assertFalse(locked.availability(restored.gameState.value!!.variables).available)
+        assertTrue(restored.journal.value.none { it.sceneId == "archive" })
+    }
+
 }

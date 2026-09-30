@@ -1,7 +1,10 @@
 {
   "schemaVersion": 3,
   "initialVariables": {
-    "lighthouseInterest": 0
+    "lighthouseInterest": 0,
+    "archiveClue": 0,
+    "harbourTrust": 0,
+    "sharedCredit": 0
   },
   "characterAppearance": {
     "enabled": true,
@@ -11,7 +14,7 @@
   },
   "id": "lighthouse_weekend",
   "title": "Пока горит маяк",
-  "description": "Выходные на острове, первый свет маяка и два знакомства, которые могут стать чем-то большим. Выберите свой вечер — и не спешите уезжать.",
+  "description": "Законченная демоглава: помогите друзьям открыть старый маяк, решите, кому довериться, и выберите свой вечер. Ранние решения вернутся в разговорах после первого света.",
   "characters": [
     {
       "id": "protagonist",
@@ -124,7 +127,11 @@
               "id": "ask_restoration",
               "text": "Илья, мне интересно, как вы восстановили маяк",
               "targetNodeId": "invite",
-              "effects": { "add": { "lighthouseInterest": 1 } }
+              "effects": {
+                "add": {
+                  "lighthouseInterest": 1
+                }
+              }
             },
             {
               "id": "enjoy_weekend",
@@ -136,7 +143,7 @@
         "invite": {
           "id": "invite",
           "characterId": "mira",
-          "text": "Сначала зажжём маяк. А потом я отпущу тебя гулять — обещаю не расспрашивать до завтра.",
+          "text": "До первого света ещё есть время. Сначала разберём фотографии для выставки и встретим гостей. А вечером каждый сможет выбрать, куда пойти: обещаю не занимать твои выходные целиком.",
           "stageCharacters": [
             {
               "worldX": 0.5,
@@ -151,11 +158,14 @@
             "targetCharacterId": "mira"
           },
           "cameraDurationMs": 0,
-          "nextNodeId": "light",
-          "nextSceneId": "tower"
+          "nextNodeId": "p01",
+          "nextSceneId": "preparation"
         }
       },
-      "audio": { "ambience": "files/audio/sea.wav" },
+      "audio": {
+        "ambience": "files/audio/sea.wav",
+        "music": "files/audio/lighthouse-theme.wav"
+      },
       "backgroundResource": "files/scenes/island_arrival.png"
     },
     "tower": {
@@ -196,7 +206,9 @@
               "targetNodeId": "restoration",
               "targetSceneId": "ilya_evening",
               "text": "Попросить Илью показать механизм маяка",
-              "conditions": { "lighthouseInterest": 1 },
+              "conditions": {
+                "lighthouseInterest": 1
+              },
               "unavailableReason": "Сначала нужно проявить интерес к восстановлению маяка при знакомстве."
             },
             {
@@ -220,7 +232,10 @@
           ]
         }
       },
-      "backgroundResource": "files/scenes/lighthouse_room.png"
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
     },
     "ilya_evening": {
       "id": "ilya_evening",
@@ -230,9 +245,15 @@
           "characterId": "ilya",
           "text": "Ты ещё у причала спросила о реставрации. Смотри: эту линзу мы собирали по кусочкам. Приятно показать её тому, кому правда интересно.",
           "stageCharacters": [
-            { "characterId": "ilya", "worldX": 0.5, "groundY": 0.94 }
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
           ],
-          "camera": { "targetCharacterId": "ilya" },
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
           "cameraDurationMs": 0,
           "nextNodeId": "quiet"
         },
@@ -265,7 +286,8 @@
             "focusX": 0.5
           },
           "cameraDurationMs": 0,
-          "nextNodeId": "ask"
+          "nextNodeId": "p01",
+          "nextSceneId": "ilya_talk"
         },
         "ask": {
           "id": "ask",
@@ -350,7 +372,10 @@
           "cameraDurationMs": 0
         }
       },
-      "backgroundResource": "files/scenes/lighthouse_room.png"
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
     },
     "mark_evening": {
       "id": "mark_evening",
@@ -384,7 +409,8 @@
             "focusX": 0.5
           },
           "cameraDurationMs": 0,
-          "nextNodeId": "ask"
+          "nextNodeId": "p01",
+          "nextSceneId": "mark_talk"
         },
         "ask": {
           "id": "ask",
@@ -469,7 +495,10 @@
           "cameraDurationMs": 0
         }
       },
-      "audio": { "ambience": "files/audio/sea.wav" },
+      "audio": {
+        "ambience": "files/audio/sea.wav",
+        "music": "files/audio/lighthouse-theme.wav"
+      },
       "backgroundResource": "files/scenes/island_arrival.png"
     },
     "friends": {
@@ -504,7 +533,8 @@
             "focusX": 0.5
           },
           "cameraDurationMs": 0,
-          "nextNodeId": "home"
+          "nextNodeId": "p01",
+          "nextSceneId": "mira_talk"
         },
         "home": {
           "id": "home",
@@ -526,7 +556,2057 @@
           "cameraDurationMs": 0
         }
       },
-      "backgroundResource": "files/scenes/lighthouse_room.png"
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "preparation": {
+      "id": "preparation",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "mira",
+          "text": "До открытия ещё несколько часов. Я обещала тебе отдых, но стол с фотографиями выглядит так, будто на нём уже прошёл шторм. Поможешь выбрать, что показать гостям? Если устала с дороги, просто посиди рядом.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "protagonist",
+          "text": "Я лучше помогу. В поезде всё время проверяла рабочие сообщения, хотя связь пропадала каждые пять минут. Хочется наконец сделать что-то, что можно закончить и увидеть своими глазами.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p03"
+        },
+        "p03": {
+          "id": "p03",
+          "characterId": "mira",
+          "text": "Тогда начнём с этой коробки. Её принесли из дома последнего смотрителя. Здесь даже билеты на старый паром сохранились. А вот снимок: посмотри на дату, маяку сегодня ровно сто лет.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p04"
+        },
+        "p04": {
+          "id": "p04",
+          "characterId": "protagonist",
+          "text": "На фотографии у двери стоят женщины с вёдрами краски. В приглашении написано только имя архитектора. Ты знаешь, кто они? Было бы здорово поставить рядом имена, а не оставить их просто людьми на фоне.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p05"
+        },
+        "p05": {
+          "id": "p05",
+          "characterId": "mira",
+          "text": "Одну звали Вера, это бабушка Ильи. Остальных пока не узнали. Я повесила копию снимка в магазине, вдруг кто-нибудь вспомнит. Не хочется придумать красивую историю и выдать её за настоящую.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p06"
+        },
+        "p06": {
+          "id": "p06",
+          "characterId": "ilya",
+          "text": "Бабушка говорила, что больше всего устала не от покраски, а от споров о цвете двери. У каждого на острове был свой правильный синий. Кажется, с тех пор изменились только названия оттенков.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p07"
+        },
+        "p07": {
+          "id": "p07",
+          "characterId": "protagonist",
+          "text": "А ты какой выбрал? Только не говори, что нашёл единственный исторически верный. После такой истории я надеюсь хотя бы на небольшой скандал на собрании жителей.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p08"
+        },
+        "p08": {
+          "id": "p08",
+          "characterId": "ilya",
+          "text": "Тот, который Мира успела заказать до собрания. Иногда реставрация требует решительности. Но старый слой мы сохранили под стеклом, можешь сравнить. Только не при Мире: она всё ещё хранит чеки.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p09"
+        },
+        "p09": {
+          "id": "p09",
+          "characterId": "mira",
+          "text": "Я стою рядом и прекрасно слышу. {{playerName}}, сначала разберём бумаги, потом отправлю вас спорить о синем. Мне ещё нужно расставить чашки и убедиться, что капитан привёз не один чайник на весь остров.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p10"
+        },
+        "p10": {
+          "id": "p10",
+          "characterId": "mark",
+          "text": "Капитан привёз два чайника и пирог. Пирог немного пострадал при швартовке, зато ни один пассажир не пострадал при его спасении. Прошу считать это успешным рейсом, несмотря на внешний вид груза.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p11"
+        },
+        "p11": {
+          "id": "p11",
+          "characterId": "protagonist",
+          "text": "Если пирог вкусный, его внешний вид никому не помешает. А вот на этой фотографии в башне стоит совсем другой прибор. Илья, вы вернули старый механизм или сделали новый внутри старого корпуса?",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p12"
+        },
+        "p12": {
+          "id": "p12",
+          "characterId": "ilya",
+          "text": "Привод новый, а линза и часть креплений прежние. Это выставочный свет: суда идут по современным навигационным огням. Мы не можем рисковать их безопасностью ради красивого открытия и старой фотографии.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p13"
+        },
+        "p13": {
+          "id": "p13",
+          "characterId": "mark",
+          "text": "Мой рейс вечером тоже не зависит от вашей лампы. Так что можно спокойно всё проверить. Я лучше подожду лишние полчаса с гостями, чем буду смотреть, как Илья делает вид, что перестал волноваться.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p14"
+        },
+        "p14": {
+          "id": "p14",
+          "characterId": "ilya",
+          "text": "Я не делаю вид. Я волнуюсь совершенно открыто. В мастерской всё работало, а сегодня перед первым запуском вдруг вспомнил каждую гайку, которую закручивал за последние три месяца.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p15"
+        },
+        "p15": {
+          "id": "p15",
+          "characterId": "protagonist",
+          "text": "Тогда давайте разделим оставшиеся дела. Я могу посмотреть бумаги вместе с тобой или помочь Марку у причала. Только скажите честно, где я буду полезна, а где стану мешать человеку с тяжёлым ящиком.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p16"
+        },
+        "p16": {
+          "id": "p16",
+          "characterId": "mira",
+          "text": "Полезна ты уже тем, что приехала. Выбирай то, что тебе самой интересно. Илья ищет старую запись о настройке линзы, а Марк должен встретить последних гостей. Потом все соберёмся у башни.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "choices": [
+            {
+              "id": "read_archive",
+              "text": "Разобрать записи смотрителя с Ильёй",
+              "targetSceneId": "archive",
+              "targetNodeId": "p01",
+              "effects": {
+                "set": {
+                  "archiveClue": 1
+                }
+              }
+            },
+            {
+              "id": "help_harbour",
+              "text": "Встретить гостей с Марком",
+              "targetSceneId": "harbour",
+              "targetNodeId": "p01",
+              "effects": {
+                "set": {
+                  "harbourTrust": 1
+                }
+              }
+            }
+          ]
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "archive": {
+      "id": "archive",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "ilya",
+          "text": "Вот тетрадь. Почерк неудобный, зато на полях целые рисунки. Смотритель отмечал не только поломки: тут записано, кому отдали лестницу, когда пришли ласточки и почему в четверг закончился сахар.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "protagonist",
+          "text": "Мне нравится этот четверг. Через сто лет от человека ждёшь важных слов о море, а он просто хотел сладкого чая. Смотри, рядом с рисунком линзы повторяется одна и та же маленькая стрелка.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p03"
+        },
+        "p03": {
+          "id": "p03",
+          "characterId": "ilya",
+          "text": "Я принял её за пометку о направлении света. Но на другом листе стрелка смотрит в ту же сторону, хотя башня нарисована снаружи. Значит, она относится к детали, а не к самому маяку.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p04"
+        },
+        "p04": {
+          "id": "p04",
+          "characterId": "protagonist",
+          "text": "Здесь написано: «После перевозки проверить фиксатор у нижнего кольца». Линзу ведь перевозили из мастерской вчера? Может, запись стоит положить рядом с сегодняшним списком проверок.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p05"
+        },
+        "p05": {
+          "id": "p05",
+          "characterId": "ilya",
+          "text": "Да. Сам лезть внутрь при включённом приводе я не собираюсь, но на остановленном проверю ещё раз. Спасибо, что дочитала мелкий текст. Я так спешил к чертежам, что пропустил бытовые заметки.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p06"
+        },
+        "p06": {
+          "id": "p06",
+          "characterId": "protagonist",
+          "text": "В моей работе самое важное тоже иногда прячется между очевидными вещами. Обычно его замечают, когда кто-нибудь наконец задаёт вопрос, который все остальные почему-то считают слишком простым.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p07"
+        },
+        "p07": {
+          "id": "p07",
+          "characterId": "ilya",
+          "text": "Я уехал сюда после большого проекта, где разучился такие вопросы задавать. Казалось, если признаюсь, что чего-то не знаю, меня сразу заменят. А здесь Мира спокойно спрашивает, зачем нужна каждая железка.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p08"
+        },
+        "p08": {
+          "id": "p08",
+          "characterId": "protagonist",
+          "text": "И что, получается отвечать спокойно? Я бы, наверное, сначала защищала каждую железку, даже ту, которую сама вчера собиралась выбросить. Иногда проще поменять решение, чем признаться, что оно было случайным.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p09"
+        },
+        "p09": {
+          "id": "p09",
+          "characterId": "ilya",
+          "text": "Не всегда. Вчера мы спорили из-за таблички полчаса. Потом оказалось, что я просто не обедал. Мира теперь сначала приносит бутерброд, а уже потом задаёт вопросы о моём великом инженерном замысле.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p10"
+        },
+        "p10": {
+          "id": "p10",
+          "characterId": "protagonist",
+          "text": "Возьмём тетрадь с собой. И бутерброд тоже, на всякий случай. Я не хочу войти в историю острова как человек, который нашёл нужную запись, но не спас реставратора от голодного спора.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextSceneId": "courtyard",
+          "nextNodeId": "p01"
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "harbour": {
+      "id": "harbour",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "mark",
+          "text": "Осторожно, доска у края мокрая. Я сам принесу ящик, а ты, пожалуйста, подержи список гостей. Там есть моя пометка про женщину с зелёным чемоданом: ей удобнее идти к башне по нижней дорожке.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "protagonist",
+          "text": "Нашла. И ещё две пометки про детей, которым обещали показать рубку. Ты всегда столько записываешь или сегодня особенный рейс? В списке больше заботы о людях, чем у меня в недельном расписании.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p03"
+        },
+        "p03": {
+          "id": "p03",
+          "characterId": "mark",
+          "text": "Записываю, потому что забываю. Доброта без блокнота у меня работает ненадёжно. Однажды обещал человеку привезти газету и три дня возил её с собой, пока он не спросил, разрешу ли я наконец её прочесть.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p04"
+        },
+        "p04": {
+          "id": "p04",
+          "characterId": "protagonist",
+          "text": "Тогда я возьму нижнюю дорожку и покажу гостям поворот. Мира дала мне схему. Только после возвращения проверю, что ты действительно поел, а не опять отдал свой кусок пирога кому-то опоздавшему.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p05"
+        },
+        "p05": {
+          "id": "p05",
+          "characterId": "mark",
+          "text": "Это уже опасно похоже на знакомство с моей сестрой. Она тоже начинает разговор с еды. Ладно, договорились: я оставляю себе кусок, ты не пытаешься нести чужой чемодан по скользким ступеням.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p06"
+        },
+        "p06": {
+          "id": "p06",
+          "characterId": "protagonist",
+          "text": "Все прошли, список у меня. Женщина с чемоданом сказала, что была здесь ребёнком и помнит звон колокольчика у входа. Теперь очень хочет узнать, сохранился ли он. Ты случайно не знаешь?",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p07"
+        },
+        "p07": {
+          "id": "p07",
+          "characterId": "mark",
+          "text": "Он лежит у Миры в коробке для выставки. Я отнесу ей записку. Люблю такие рейсы: утром везёшь незнакомых людей, а вечером уже знаешь, кто приехал к колокольчику, а кто просто хотел увидеть море.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p08"
+        },
+        "p08": {
+          "id": "p08",
+          "characterId": "protagonist",
+          "text": "А ты сам зачем остался? Только не отвечай, что любишь море. Это я уже поняла по тому, как ты проверил погоду три раза за десять минут. Наверняка здесь есть что-то ещё, кроме хорошего вида.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p09"
+        },
+        "p09": {
+          "id": "p09",
+          "characterId": "mark",
+          "text": "Однажды вернулся после зимы и понял, что меня ждут без всякого повода. Не как капитана, который сейчас что-нибудь привезёт. Просто меня. Мне понадобилось несколько лет, чтобы перестать считать это мелочью.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p10"
+        },
+        "p10": {
+          "id": "p10",
+          "characterId": "protagonist",
+          "text": "Хорошая причина. Пойдём к башне, пока нас не начали ждать уже по делу. И спасибо, что доверил мне гостей. Я приехала отдохнуть от ответственности, а оказалось, от небольшой и понятной совсем не устаю.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextSceneId": "courtyard",
+          "nextNodeId": "p01"
+        }
+      },
+      "backgroundResource": "files/scenes/island_arrival.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav",
+        "ambience": "files/audio/sea.wav"
+      }
+    },
+    "courtyard": {
+      "id": "courtyard",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "mira",
+          "text": "Вы вовремя. Гости устроились во дворе, а я пытаюсь решить, говорить речь по бумажке или сразу признаться, что всё забыла. На репетиции слушателем был чайник, и он вёл себя гораздо спокойнее.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "protagonist",
+          "text": "Оставь бумажку у себя. Даже если не посмотришь, будет приятно знать, что она рядом. Ты ведь не экзамен сдаёшь. Люди приехали увидеть маяк и тебя, а не проверить, сколько дат ты выучила.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p03"
+        },
+        "p03": {
+          "id": "p03",
+          "characterId": "mira",
+          "text": "Я знаю. Просто полгода объясняла всем, зачем нам это место, и теперь боюсь, что оно окажется обычной комнатой со старой лампой. В голове открытие почему-то всегда было лучше, чем в списке расходов.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p04"
+        },
+        "p04": {
+          "id": "p04",
+          "characterId": "protagonist",
+          "text": "В обычную комнату уже принесли старые фотографии, пирог и воспоминание про колокольчик. Мне кажется, она перестала быть обычной раньше, чем ты успела повесить последнюю табличку. Но речь я всё равно подержу.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p05"
+        },
+        "p05": {
+          "id": "p05",
+          "characterId": "ilya",
+          "text": "Перед гостями нужен ещё один пробный запуск. Прошу всех остаться за ограждением. Если услышите щелчок, не пугайтесь: это привод начинает поворот. А если не услышите, волноваться первым буду я.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p06",
+          "speakerSpriteResource": "files/characters/ilya-worried.png"
+        },
+        "p06": {
+          "id": "p06",
+          "characterId": "mark",
+          "text": "Тогда я постою рядом с выключателем по твоей инструкции. {{playerName}}, отсюда видно отражение в окне. Скоро оно пройдёт по стене и вернётся к двери. В прошлый раз я смотрел на часы и пропустил весь круг.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p07"
+        },
+        "p07": {
+          "id": "p07",
+          "characterId": "ilya",
+          "text": "Стоп. Я отключил питание. Линза не должна останавливаться в этом положении. Никто не трогает корпус, пока я не проверю, что привод полностью остановился. Мира, скажи гостям, что мы немного задержимся.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p08",
+          "speakerSpriteResource": "files/characters/ilya-worried.png"
+        },
+        "p08": {
+          "id": "p08",
+          "characterId": "mira",
+          "text": "Хорошо. Не обещай мне пять минут, если сам не знаешь. Я предложу людям чай и покажу фотографии. Открытие можно отложить; делать вид, будто всё идёт по плану, сейчас гораздо труднее и совершенно незачем.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p09"
+        },
+        "p09": {
+          "id": "p09",
+          "characterId": "protagonist",
+          "text": "Чем помочь? Я останусь за ограждением. Могу прочитать список вслух или сходить за инструментами, если скажешь, какие нужны. Только давай по одному делу: я пока различаю ваши ключи исключительно по размеру.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p10"
+        },
+        "p10": {
+          "id": "p10",
+          "characterId": "ilya",
+          "text": "Инструменты здесь. Хуже всего то, что я уже проверял этот узел. Сейчас смотрю на него и не могу отделить то, что действительно помню, от того, что просто очень хочу помнить. Нужна спокойная вторая проверка.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p11",
+          "speakerSpriteResource": "files/characters/ilya-worried.png"
+        },
+        "p11": {
+          "id": "p11",
+          "characterId": "mark",
+          "text": "Я останусь с тобой. Мы никуда не торопимся. Последний рейс я перенёс заранее, гости знают. Если сегодня свет не включится, отвезу их обратно с пирогом и честным рассказом о том, что мы пробовали.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p12"
+        },
+        "p12": {
+          "id": "p12",
+          "characterId": "protagonist",
+          "text": "У нас есть список проверок и время. А ещё вещи, которые мы узнали днём. Давай начнём с того, что можем проверить без догадок; спорить с механизмом и обещать чудо будем в другой выходной.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "choices": [
+            {
+              "id": "use_archive",
+              "text": "Напомнить про фиксатор из тетради",
+              "targetSceneId": "repair_clue",
+              "targetNodeId": "p01",
+              "conditions": {
+                "archiveClue": 1
+              },
+              "unavailableReason": "Нужно было разобрать записи смотрителя с Ильёй."
+            },
+            {
+              "id": "check_together",
+              "text": "Пройти с Ильёй весь список проверок",
+              "targetSceneId": "repair_check",
+              "targetNodeId": "p01"
+            }
+          ]
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "repair_clue": {
+      "id": "repair_clue",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "protagonist",
+          "text": "В тетради была запись про нижнее кольцо после перевозки. Мы положили её к твоему списку. Я не знаю, связана ли остановка с ним, но это конкретная вещь, которую можно проверить, прежде чем искать большую поломку.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "ilya",
+          "text": "Вот она, стрелка на полях. Ты права, начну отсюда. Питание отключено, фиксатор виден снаружи. Кажется, при установке он остался в транспортном положении. Хорошо, что мы не пытались просто запустить привод ещё раз.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p03"
+        },
+        "p03": {
+          "id": "p03",
+          "characterId": "mark",
+          "text": "Я придержу фонарь, а ты проверь крепление по инструкции. Забавно: сегодня самая полезная вещь на острове — не мой новый катер, а чужая запись карандашом. Надо будет купить Мире хороший футляр для тетради.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p04"
+        },
+        "p04": {
+          "id": "p04",
+          "characterId": "ilya",
+          "text": "Готово. Но сначала полный контрольный осмотр, даже если причина уже найдена. {{playerName}}, спасибо за внимательность. Ты не обязана разбираться в механизме, чтобы заметить то, чего я не увидел.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextSceneId": "opening",
+          "nextNodeId": "p01"
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "repair_check": {
+      "id": "repair_check",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "protagonist",
+          "text": "Начнём сначала, без попытки угадать ответ. Я прочитаю пункт и подожду, пока ты проверишь. Если что-то непонятно, ты объяснишь. Сегодня я вполне могу быть человеком, который задаёт слишком простые вопросы.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "ilya",
+          "text": "Первый пункт пройден. Второй тоже. Подожди, вот транспортный фиксатор: отметка в списке есть, а положение неправильное. Я проверил его до установки, а после перевозки почему-то посчитал уже проверенным.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p03"
+        },
+        "p03": {
+          "id": "p03",
+          "characterId": "mark",
+          "text": "Значит, в следующем списке будут две отдельные строки. Одна для мастерской, другая для башни. На катере я однажды сделал такую же поправку и с тех пор больше не ищу отвязанный конец на причале.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p04"
+        },
+        "p04": {
+          "id": "p04",
+          "characterId": "ilya",
+          "text": "Да, так и запишем. Сейчас исправлю при отключённом питании, потом пройдём оставшиеся пункты. Спасибо, что не стали торопить. Мне было нужно услышать вопросы вслух, а не ещё раз пробежать их глазами.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextSceneId": "opening",
+          "nextNodeId": "p01"
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "opening": {
+      "id": "opening",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "ilya",
+          "text": "Контроль закончен. Все за ограждением? Тогда пробуем ещё раз. Не буду просить вас задержать дыхание: я сам только что вспомнил, что это необязательно. Смотрите на стену слева от двери.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "protagonist",
+          "text": "Пошёл свет. Сначала узкая полоска, теперь всё окно. Я думала, будет ярче, а он какой-то тёплый. Можно просто стоять и ждать следующего круга, будто кто-то медленно перелистывает большую книгу.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p03"
+        },
+        "p03": {
+          "id": "p03",
+          "characterId": "mark",
+          "text": "Вот теперь я ничего не пропустил. Мира, можешь звать гостей наверх маленькими группами. Я останусь у лестницы. После третьего подъёма начну принимать ваши обещанные благодарности исключительно в виде чая.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p04"
+        },
+        "p04": {
+          "id": "p04",
+          "characterId": "mira",
+          "text": "Перед тем как мы начнём, хочу сказать пару слов. Полгода назад у меня были ключ, протекающая крыша и уверенность, что я совершенно не умею просить помощи. Сегодня здесь столько людей, что бумажка с речью мне уже мала.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p05"
+        },
+        "p05": {
+          "id": "p05",
+          "characterId": "ilya",
+          "text": "Не забудь себя в этом списке. Ты обычно перечисляешь всех, включая человека, который один раз подержал дверь, а потом говоришь, что просто немного помогала. Без тебя мы бы до сих пор спорили, с чего начать.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p06"
+        },
+        "p06": {
+          "id": "p06",
+          "characterId": "mira",
+          "text": "Ладно. Я тоже молодец. Это самая трудная строка моей речи, и я только что произнесла её без бумажки. А теперь отдельно поблагодарю нашу гостью: сегодня {{playerName}} помогла нам не потерять голову перед запуском.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p07"
+        },
+        "p07": {
+          "id": "p07",
+          "characterId": "protagonist",
+          "text": "Мне приятно, что ты это сказала. Но я правда приехала в уже почти готовое место. Можно принять благодарность и при этом помнить, сколько работы здесь сделали до моего приезда. Хочу сказать это так, чтобы ты меня услышала.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "choices": [
+            {
+              "id": "share_credit",
+              "text": "Поблагодарить всю команду и назвать вклад каждого",
+              "targetSceneId": "credit_shared",
+              "targetNodeId": "p01",
+              "effects": {
+                "set": {
+                  "sharedCredit": 1
+                }
+              }
+            },
+            {
+              "id": "accept_thanks",
+              "text": "Принять благодарность и пригласить гостей смотреть маяк",
+              "targetSceneId": "credit_personal",
+              "targetNodeId": "p01"
+            }
+          ]
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "credit_shared": {
+      "id": "credit_shared",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "protagonist",
+          "text": "Спасибо. Я помогла сегодня, а вы собирали этот день много месяцев. Илья вернул свет, Марк привёз людей, Мира нашла место для их историй. Мне хочется, чтобы гости унесли с собой все три имени, а не только последнее.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "mira",
+          "text": "Унесут. И твоё тоже, если ты не против. Поставлю рядом с тетрадью чистую страницу: пусть каждый напишет, что помнит про остров. Тогда выставка не закончится в тот момент, когда мы наконец развесили все рамки.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextSceneId": "afterlight",
+          "nextNodeId": "p01"
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "credit_personal": {
+      "id": "credit_personal",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "protagonist",
+          "text": "Спасибо, Мира. Я рада, что оказалась здесь вовремя. А теперь пойдём смотреть, ради чего мы все собрались. Если ещё немного задержать Марка у лестницы, он действительно начнёт брать с нас по чашке за каждый подъём.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "mira",
+          "text": "Уже приготовила ему самую большую. Спасибо, что не испугалась нашей суеты. Я боялась, что вместо выходных подарила тебе ещё один рабочий день. Теперь вижу: кажется, кое-что хорошее всё-таки получилось.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextSceneId": "afterlight",
+          "nextNodeId": "p01"
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "afterlight": {
+      "id": "afterlight",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "mira",
+          "text": "Последняя группа спустилась. Женщина с зелёным чемоданом нашла свой колокольчик и расплакалась. Я сначала решила, что сделала что-то не так, а она попросила оставить её рядом с ним ещё на минуту.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "protagonist",
+          "text": "Хорошо, что ты не стала сразу её утешать. Иногда человеку нужно немного побыть со своим воспоминанием, даже если со стороны непонятно, радостное оно или грустное. Здесь для этого наконец появилось место.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p03"
+        },
+        "p03": {
+          "id": "p03",
+          "characterId": "ilya",
+          "text": "Мы завтра запишем её рассказ, если она захочет. Я всё думал о механизме, а она первым делом спросила, сохранилась ли внизу скамейка. Оказывается, моя бабушка учила её завязывать шнурки именно на ней.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p04"
+        },
+        "p04": {
+          "id": "p04",
+          "characterId": "mark",
+          "text": "Скамейка цела. Краску на ней, правда, выбирала Мира, так что историческую достоверность цвета мы снова не гарантируем. Зато сидеть можно без опасения оставить половину пальто на старых досках.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p05"
+        },
+        "p05": {
+          "id": "p05",
+          "characterId": "protagonist",
+          "text": "Сегодня я узнала про этот остров больше, чем из всех фотографий перед поездкой. На них он казался красивым и немного пустым. А здесь даже у скамейки есть знакомые, которые помнят, какой она была раньше.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p06"
+        },
+        "p06": {
+          "id": "p06",
+          "characterId": "mira",
+          "text": "Поэтому я и хотела тебя привезти. Ты последнее время рассказывала только о том, что должна успеть. Мне не нужен отчёт об идеальном отдыхе. Если завтра проспишь половину дня, я просто оставлю завтрак под крышкой.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p07"
+        },
+        "p07": {
+          "id": "p07",
+          "characterId": "protagonist",
+          "text": "Спасибо. Я всё ещё ловлю себя на желании проверить сообщения и убедиться, что без меня всё работает. Хотя именно этого и хотела перед отъездом. Странно сердиться на собственное исполненное желание.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p08"
+        },
+        "p08": {
+          "id": "p08",
+          "characterId": "ilya",
+          "text": "У меня телефон первое время жил в ящике с инструментами. Не из принципа: руки были заняты, и я забывал его достать. Потом заметил, что мир пережил пару часов моего отсутствия без серьёзных повреждений.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p09"
+        },
+        "p09": {
+          "id": "p09",
+          "characterId": "mark",
+          "text": "Мой, к сожалению, всегда нужен для рейсов. Зато после последнего я выключаю рабочий звук. Раньше путал это с безответственностью, теперь считаю частью расписания. Капитану тоже полагается иногда ужинать спокойно.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p10"
+        },
+        "p10": {
+          "id": "p10",
+          "characterId": "protagonist",
+          "text": "Попробую начать с сегодняшнего вечера. Без торжественной клятвы навсегда изменить жизнь. Просто выберу, куда пойти, и не буду одновременно придумывать три причины вернуться к делам. Для первого раза достаточно.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p11"
+        },
+        "p11": {
+          "id": "p11",
+          "characterId": "mira",
+          "text": "Более чем. Я уберу чашки, а потом пойду к себе. Если захочешь компанию, у меня осталось немного пирога. Если захочешь тишины, ключ у тебя. Никакой обязательной программы спасения от повседневности.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p12"
+        },
+        "p12": {
+          "id": "p12",
+          "characterId": "ilya",
+          "text": "Я ещё раз поднимусь выключить выставочный режим на ночь. Отсюда хорошо видно вечернюю воду. Можно пойти со мной, только предупреждаю: после сегодняшнего я рассказываю про эту линзу ещё дольше, чем обычно.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p13"
+        },
+        "p13": {
+          "id": "p13",
+          "characterId": "mark",
+          "text": "А я проверю швартовы и посижу у причала. Без рейса, без обещания показать секретный остров. Просто рядом с водой. Хотя если ты согласишься, хороший чай в каюте я всё-таки найду.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p14"
+        },
+        "p14": {
+          "id": "p14",
+          "characterId": "protagonist",
+          "text": "Дайте мне минуту. Мне нравится, что ни один из этих вариантов не выглядит запасным. Можно остаться с подругой, познакомиться ближе с кем-то из вас или просто не спешить. Впервые за день выбирать приятно.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextSceneId": "tower",
+          "nextNodeId": "light"
+        }
+      },
+      "backgroundResource": "files/scenes/island_arrival.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav",
+        "ambience": "files/audio/sea.wav"
+      }
+    },
+    "ilya_talk": {
+      "id": "ilya_talk",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "ilya",
+          "text": "Здесь наконец тихо. Днём я почти не смотрел в окно, хотя всем рассказывал про вид. Странная привычка: показать человеку что-то хорошее и всё время следить, понравилось ли ему, вместо того чтобы посмотреть самому.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "protagonist",
+          "text": "Можешь сейчас не следить. Если мне станет скучно, я скажу. Мне понравилось, как ты остановил запуск. Не потому, что всё потом получилось, а потому, что ты не стал скрывать проблему от гостей.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p03"
+        },
+        "p03": {
+          "id": "p03",
+          "characterId": "ilya",
+          "text": "Внутри это выглядело менее достойно. Я представил, как завтра будут говорить: три месяца возился и даже лампу включить не смог. Иногда чужой голос в голове звучит убедительнее, чем настоящие люди рядом.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p04"
+        },
+        "p04": {
+          "id": "p04",
+          "characterId": "protagonist",
+          "text": "У меня он тоже есть. Обычно знает, как следовало поступить вчера, и никогда не помогает сегодня. Наверное, поэтому мне было легче читать тебе список, чем успокаивать саму себя перед обычным рабочим разговором.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p05"
+        },
+        "p05": {
+          "id": "p05",
+          "characterId": "ilya",
+          "text": "Когда приехала ты, я сначала обрадовался новому человеку, которому можно показать башню. А потом поймал себя на том, что хочу услышать, что ты скажешь. Даже если это будет вопрос, на который у меня нет ответа.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p06"
+        },
+        "p06": {
+          "id": "p06",
+          "characterId": "protagonist",
+          "text": "Тогда задам такой. Когда реставрация закончена, чем ты займёшься? Не следующим большим проектом, а в обычный свободный день. Ты ведь не можешь каждое утро заново открывать один и тот же маяк.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p07"
+        },
+        "p07": {
+          "id": "p07",
+          "characterId": "ilya",
+          "text": "Хочу научиться печь хлеб. Пока выходит строительный материал, который можно использовать для подпорки двери. Марк уверяет, что это полезный результат, но пробовать второй кусок каждый раз отказывается.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p08"
+        },
+        "p08": {
+          "id": "p08",
+          "characterId": "protagonist",
+          "text": "Я могу принести хороший рецепт. Только сразу предупреждаю: наличие рецепта не делает меня хорошим пекарем. Есть риск, что у маяка появится вторая подпорка двери, зато первая больше не будет одинока.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p09"
+        },
+        "p09": {
+          "id": "p09",
+          "characterId": "ilya",
+          "text": "Согласен на такой риск. Завтра купим муку в магазине, если тебе захочется. И если не захочется, всё в порядке. Мне важно не превратить хорошую встречу в расписание, которому ты теперь почему-то должна следовать.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p10"
+        },
+        "p10": {
+          "id": "p10",
+          "characterId": "protagonist",
+          "text": "Пока мне хочется остаться здесь ещё немного. Завтра решим завтра. Сегодня я уже достаточно раз пыталась угадать, что будет дальше, и лучше всего получилось тогда, когда просто спросила человека рядом.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "choices": [
+            {
+              "id": "remember_archive",
+              "text": "Вернуться к записи, которую нашли вместе",
+              "targetSceneId": "ilya_memory",
+              "targetNodeId": "p01",
+              "conditions": {
+                "archiveClue": 1
+              },
+              "unavailableReason": "Вы не разбирали архив вместе."
+            },
+            {
+              "id": "remember_credit",
+              "text": "Вспомнить общую благодарность на открытии",
+              "targetSceneId": "ilya_credit",
+              "targetNodeId": "p01",
+              "conditions": {
+                "sharedCredit": 1
+              },
+              "unavailableReason": "На открытии вы выбрали короткую личную благодарность."
+            },
+            {
+              "id": "stay_quiet",
+              "text": "Остаться рядом в тишине",
+              "targetSceneId": "ilya_evening",
+              "targetNodeId": "ask"
+            }
+          ]
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "ilya_memory": {
+      "id": "ilya_memory",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "protagonist",
+          "text": "Я всё думаю про ту тетрадь. Мы нашли нужную строку, потому что не выбросили мелкие чужие заботы из большой истории. Мне понравилось разбирать её с тобой. Там не было человека, который обязан сразу всё знать.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "ilya",
+          "text": "Мне тоже. Я оставил закладку на записи про сахар. Завтра начну с неё экскурсию, если Мира разрешит. А тебе хотел сказать спасибо отдельно, без гостей и благодарственной речи. За внимательность и за этот спокойный разговор.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextSceneId": "ilya_evening",
+          "nextNodeId": "ask"
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "mark_talk": {
+      "id": "mark_talk",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "mark",
+          "text": "Я проверил канаты. Теперь официально могу никуда не идти. Садись на сухую сторону скамейки; мокрую я обнаружил несколько минут назад и проверил самым убедительным способом. Не самая героическая часть моего дня.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "protagonist",
+          "text": "Зато честная. После сегодняшнего мне нравятся истории, в которых человек может признаться, что сел не туда. В городе все почему-то рассказывают только про удачные решения, и кажется, что ошибаешься одна ты.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p03"
+        },
+        "p03": {
+          "id": "p03",
+          "characterId": "mark",
+          "text": "Я когда-то тоже рассказывал про дальние рейсы так, будто всё время стоял на носу против ветра. На самом деле большую часть времени проверял накладные и пытался найти чистую кружку. Но слушателям нравился ветер.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p04"
+        },
+        "p04": {
+          "id": "p04",
+          "characterId": "protagonist",
+          "text": "Мне сейчас интереснее кружка. И то, почему ты заметил, что гостье неудобно идти по лестнице. Это ведь не входит в красивую историю про капитана, зато сильно меняет чей-то обычный день.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p05"
+        },
+        "p05": {
+          "id": "p05",
+          "characterId": "mark",
+          "text": "Наверное, потому что однажды не заметил. Человек постеснялся попросить помощи, а я торопился закончить рейс. Ничего страшного не случилось, но потом долго думал, как легко было просто спросить заранее.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p06"
+        },
+        "p06": {
+          "id": "p06",
+          "characterId": "protagonist",
+          "text": "Сегодня ты спросил. Я слышала, как она тебя благодарила. Иногда трудно разрешить себе считать исправленную привычку чем-то хорошим: кажется, раз однажды ошибся, теперь любое правильное действие всего лишь долг.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p07"
+        },
+        "p07": {
+          "id": "p07",
+          "characterId": "mark",
+          "text": "С тобой опасно сидеть у воды: начинаешь говорить то, что обычно прячешь за шутками. Мне это нравится. Хотя заранее подготовленного ответа у меня нет, а капитанам полагается уверенно показывать направление рукой.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p08"
+        },
+        "p08": {
+          "id": "p08",
+          "characterId": "protagonist",
+          "text": "Можешь показать на чайник. Это надёжное направление, я готова поддержать. А разговор никуда не денется. Мне нравится узнавать тебя постепенно, без необходимости за один вечер рассказать все самые важные вещи.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p09"
+        },
+        "p09": {
+          "id": "p09",
+          "characterId": "mark",
+          "text": "Тогда сначала чай. Завтра у меня свободное утро, и с причала видно рассвет. Это не предложение с тайным обязательством: можешь прийти на десять минут, можешь не прийти. Просто хочу оставить тебе настоящее приглашение.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p10"
+        },
+        "p10": {
+          "id": "p10",
+          "characterId": "protagonist",
+          "text": "Я подумаю и отвечу прямо. Сегодня мне уже несколько раз дали возможность выбирать без обиды, и я начинаю привыкать. Даже не хочется придумывать уважительную причину там, где достаточно обычного «да» или «нет».",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "choices": [
+            {
+              "id": "remember_harbour",
+              "text": "Вспомнить, как вместе встречали гостей",
+              "targetSceneId": "mark_memory",
+              "targetNodeId": "p01",
+              "conditions": {
+                "harbourTrust": 1
+              },
+              "unavailableReason": "Вы не помогали Марку у причала."
+            },
+            {
+              "id": "remember_credit",
+              "text": "Вспомнить общую благодарность на открытии",
+              "targetSceneId": "mark_credit",
+              "targetNodeId": "p01",
+              "conditions": {
+                "sharedCredit": 1
+              },
+              "unavailableReason": "На открытии вы выбрали короткую личную благодарность."
+            },
+            {
+              "id": "finish_tea",
+              "text": "Допить чай и ответить на приглашение",
+              "targetSceneId": "mark_evening",
+              "targetNodeId": "ask"
+            }
+          ]
+        }
+      },
+      "backgroundResource": "files/scenes/island_arrival.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav",
+        "ambience": "files/audio/sea.wav"
+      }
+    },
+    "mark_memory": {
+      "id": "mark_memory",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "mark",
+          "text": "Кстати, я оставил твой лист со списком гостей. Ты нарисовала стрелку к нижней дорожке, и это понятнее моей длинной пометки. Скопирую схему перед следующим рейсом. Кажется, у меня появился хороший помощник на один день.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02",
+          "speakerSpriteResource": "files/characters/mark-laughing.png"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "protagonist",
+          "text": "На один день — важное уточнение. Завтра я могу оказаться очень ленивым пассажиром. Но сегодня мне было хорошо рядом с тобой. Спасибо, что дал настоящее дело и не стал переделывать всё за мной при первой возможности.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextSceneId": "mark_evening",
+          "nextNodeId": "ask"
+        }
+      },
+      "backgroundResource": "files/scenes/island_arrival.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav",
+        "ambience": "files/audio/sea.wav"
+      }
+    },
+    "mira_talk": {
+      "id": "mira_talk",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "mira",
+          "text": "Я всё-таки спрошу один раз: тебе правда хочется остаться со мной? Не потому, что я устала или наготовила слишком много чая. Я переживу лишний пирог. Он, честно говоря, пережил уже гораздо более серьёзные испытания.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "protagonist",
+          "text": "Правда. Мы давно не виделись, и мне не хочется превращать встречу с тобой в промежуток между другими планами. Я могу познакомиться с людьми и всё равно выбрать вечер с подругой. Тут нет никакого противоречия.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p03"
+        },
+        "p03": {
+          "id": "p03",
+          "characterId": "mira",
+          "text": "Хорошо. Просто когда мы жили рядом, можно было молча зайти друг к другу. Теперь каждый приезд кажется событием, которое нельзя испортить. Я даже купила новые чашки, хотя ты всегда любила старую, со сколотой ручкой.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p04"
+        },
+        "p04": {
+          "id": "p04",
+          "characterId": "protagonist",
+          "text": "Она ещё цела? Тогда новые оставь гостям. Мне не нужно, чтобы всё было как раньше, но приятно найти здесь что-то знакомое. И ещё приятнее узнать, что ты не убрала это специально к моему приезду.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p05"
+        },
+        "p05": {
+          "id": "p05",
+          "characterId": "mira",
+          "text": "Чашка на верхней полке. Я пользуюсь ею, когда никто не видит: все уверены, что после открытия выставки я обязана ценить только красивые вещи. А у неё правильный размер и очень удобное место для большого пальца.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p06"
+        },
+        "p06": {
+          "id": "p06",
+          "characterId": "protagonist",
+          "text": "Расскажи, что было самым трудным за эти полгода. Только если хочешь. Я весь день слышала про крышу и линзу, но подозреваю, что иногда сложнее всего было просто проснуться и снова кому-нибудь позвонить.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p07"
+        },
+        "p07": {
+          "id": "p07",
+          "characterId": "mira",
+          "text": "Да. После третьего отказа я неделю не открывала письмо со сметой. Илья принёс еду, Марк починил замок, а я злилась на них обоих, потому что помощь напоминала: они видят, что я не справляюсь одна.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p08"
+        },
+        "p08": {
+          "id": "p08",
+          "characterId": "protagonist",
+          "text": "Мне жаль, что я тогда спрашивала только, как продвигается работа. Можно было спросить, как ты сама. Я не знала, что за коротким «нормально» столько всего. В следующий раз можешь ответить длиннее, даже если у меня будний день.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p09"
+        },
+        "p09": {
+          "id": "p09",
+          "characterId": "mira",
+          "text": "Попробую. Только и ты не присылай мне отчёт вместо ответа. Мне можно рассказать про плохой обед, дурацкий спор и усталость без большой причины. Я не обязана сразу всё исправить, чтобы иметь право тебя слушать.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p10"
+        },
+        "p10": {
+          "id": "p10",
+          "characterId": "protagonist",
+          "text": "Договорились. Начну с малого: в поезде я купила совершенно ужасный кофе и всё равно допила, потому что было жалко денег. Вот теперь ты знаешь самое нелепое решение моего дня. Можешь смеяться, я уже сама смеюсь.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "choices": [
+            {
+              "id": "remember_team",
+              "text": "Обсудить общую благодарность на открытии",
+              "targetSceneId": "mira_memory",
+              "targetNodeId": "p01",
+              "conditions": {
+                "sharedCredit": 1
+              },
+              "unavailableReason": "На открытии вы выбрали короткую личную благодарность."
+            },
+            {
+              "id": "enjoy_tea",
+              "text": "Остаться пить чай без больших разговоров",
+              "targetSceneId": "friends",
+              "targetNodeId": "home"
+            }
+          ]
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "mira_memory": {
+      "id": "mira_memory",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "mira",
+          "text": "Когда ты назвала всех на открытии, я вдруг перестала считать в голове, кого забыла. Было чувство, что кто-то подхватил тяжёлую коробку с другой стороны. Я не сразу нашла слова, но это правда много для меня значило.",
+          "stageCharacters": [
+            {
+              "characterId": "mira",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mira"
+          },
+          "cameraDurationMs": 0,
+          "nextNodeId": "p02"
+        },
+        "p02": {
+          "id": "p02",
+          "characterId": "protagonist",
+          "text": "Я видела, сколько вы сделали вместе. Не хотелось свести всё к последним минутам перед запуском. А завтра давай оставим коробки в покое и сходим гулять. Можно без цели, без фотографий для отчёта и без обязательной пользы.",
+          "stageCharacters": [],
+          "camera": {
+            "focusX": 0.5
+          },
+          "cameraDurationMs": 0,
+          "nextSceneId": "friends",
+          "nextNodeId": "home"
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "ilya_credit": {
+      "id": "ilya_credit",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "ilya",
+          "text": "Ты на открытии сказала, что я вернул свет. Мне было важно, что ты назвала и остальных. Я слишком долго думал о маяке как о своей проверке на прочность, а сегодня наконец увидел, сколько людей держали его вместе со мной.",
+          "stageCharacters": [
+            {
+              "characterId": "ilya",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "ilya"
+          },
+          "cameraDurationMs": 0,
+          "nextSceneId": "ilya_evening",
+          "nextNodeId": "ask"
+        }
+      },
+      "backgroundResource": "files/scenes/lighthouse_room.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav"
+      }
+    },
+    "mark_credit": {
+      "id": "mark_credit",
+      "nodes": {
+        "p01": {
+          "id": "p01",
+          "characterId": "mark",
+          "text": "Мне запомнилось, как ты поблагодарила всех на открытии. Обычно капитану машут с берега, и он уходит проверять катер. Сегодня захотелось остаться на общей фотографии. Хорошо иногда быть частью праздника, а не только рейса до него.",
+          "stageCharacters": [
+            {
+              "characterId": "mark",
+              "worldX": 0.5,
+              "groundY": 0.94
+            }
+          ],
+          "camera": {
+            "targetCharacterId": "mark"
+          },
+          "cameraDurationMs": 0,
+          "nextSceneId": "mark_evening",
+          "nextNodeId": "ask"
+        }
+      },
+      "backgroundResource": "files/scenes/island_arrival.png",
+      "audio": {
+        "music": "files/audio/lighthouse-theme.wav",
+        "ambience": "files/audio/sea.wav"
+      }
     }
   }
 }

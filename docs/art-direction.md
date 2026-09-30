@@ -110,3 +110,16 @@ Use case illustration-story. Production full-body character sprite for a sophist
 ```text
 Use case illustration-story. Production full-body character sprite for a sophisticated hand-painted cinematic visual novel about an island lighthouse. ONE man only: Lev, a 55-year-old lighthouse keeper, short windswept silver hair, close-cropped salt-and-pepper beard, lined kindly tired face, ochre yellow weathered raincoat open over dark navy fisherman sweater, charcoal work trousers, sturdy worn black boots. Natural adult proportions, expressive face detailed, sturdy build, calm serious expression, three-quarter view almost frontal, neutral standing pose, arms comfortably resting at sides hands visible, no objects held. Elegant painterly digital oil/gouache shading, crisp clean silhouette, soft blue ambient light and subtle warm amber rim light, detailed worn fabric, not photorealism, not chibi. Portrait 2:3 framing entire body including shoes, head near top and boots near bottom with only small padding, character centered horizontally. GENUINELY TRANSPARENT alpha background; no scenery, no floor, no painted checkerboard, no rectangular cast shadow, no text, no watermark, no extra characters. PNG cutout ready to composite over scenery.
 ```
+
+## Эмоции демоглавы (30 сентября 2026)
+
+Через встроенный ImageGen созданы два дополнительных спрайта; исходные изображения не заменены:
+
+- `shared/src/commonMain/composeResources/files/characters/ilya-worried.png` — тревога при остановке механизма.
+- `shared/src/commonMain/composeResources/files/characters/mark-laughing.png` — тёплый смех в разговоре о совместной работе.
+
+Промпт Ильи: «Use case: identity-preserve. Edit target: Ilya, adult visual novel character in attached image. Produce one full-body emotional variant: visibly worried, brows drawn together, closed unsmiling mouth, worried eyes. Keep identity, exact dark wavy hair, vest, shirt, trousers, boots, pose, proportions, painterly realistic style and framing unchanged. Entire character visible, transparent background, no glow, no text. This is a production sprite for the same game.» Референс — `files/characters/ilya.png`.
+
+Промпт Марка: «Use case: identity-preserve. Edit target Mark from reference, adult visual novel character. One full-body emotional variant with a sincere delighted laugh, eyes smiling, naturally open smile. Keep identity, blond hair, blue peacoat, red sweater, trousers, boots, pose and proportions, same painterly realistic style and entire full-body framing. Transparent background; no glow, no text. Production game sprite.» Референс — `files/characters/mark.png`.
+
+Эмоция выбирается на уровне реплики через `speakerSpriteResource`, без дублирования персонажей в списке действующих лиц. Alpha-канал сохранён. Финальную читаемость эмоций на маленьких экранах следует проверить на устройстве.
