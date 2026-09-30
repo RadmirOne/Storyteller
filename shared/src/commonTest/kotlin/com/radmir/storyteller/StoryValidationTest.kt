@@ -92,4 +92,35 @@ class StoryValidationTest {
             validateStoryResources(script()) { throw CancellationException("Cancelled") }
         }
     }
+
+    @Test fun emotionalPortraitIsSerializedValidatedAndLoaded() = runBlocking {
+        val portrait = "files/characters/worried.png"
+        val story = script(node.copy(speakerSpriteResource = portrait)).copy(schemaVersion = 3)
+        val parsed = StoryRepository().parseScript(Json.encodeToString(story))
+        assertEquals(portrait, parsed.scenes.getValue("forest").nodes.getValue("start").speakerSpriteResource)
+        val loaded = mutableSetOf<String>()
+        validateStoryResources(parsed) { loaded.add(it) }
+        assertTrue(portrait in loaded)
+        val error = assertFailsWith<StoryValidationException> {
+            validateStoryResources(parsed) { if (it == portrait) error("missing") }
+        }
+        assertTrue(error.message!!.contains(portrait))
+        assertNull(node.speakerSpriteResource)
+    }
+
+    @Test fun emotionalPortraitRejectsUnsafePathsLegacySchemaAndPlayerOverride() {
+        assertFailsWith<StoryValidationException> {
+            validateStory(script(node.copy(speakerSpriteResource = "files/worried.png")))
+        }
+        listOf("../secret.png", "files/../secret.png", "https://example.com/image.png", "").forEach { path ->
+            assertFailsWith<StoryValidationException> {
+                validateStory(script(node.copy(speakerSpriteResource = path)).copy(schemaVersion = 3))
+            }
+        }
+        assertFailsWith<StoryValidationException> {
+            validateStory(script(node.copy(characterId = "protagonist", speakerSpriteResource = "files/worried.png"))
+                .copy(schemaVersion = 3, characters = listOf(Character("protagonist", "Вы"))))
+        }
+    }
+
 }

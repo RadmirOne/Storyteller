@@ -67,7 +67,8 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel(), onReturnToMenu: () -> U
             key(script.id, scene.scene.id, current.characterId, position) {
                 DialogueCharacter(
                     speakerName = speakerName,
-                    spriteResource = script.characters.find { it.id == current.characterId }?.spriteResource,
+                    spriteResource = current.speakerSpriteResource
+                        ?: script.characters.find { it.id == current.characterId }?.spriteResource,
                     player = speakingPlayer,
                     position = position,
                     appearance = if (settings.reduceMotion) script.characterAppearance.copy(enabled = false) else script.characterAppearance,
